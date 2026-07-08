@@ -67,13 +67,15 @@ describe("Callable invocation", () => {
     it("Member access invocation", async () => {
         const tokens = await tokenize(`purifiedState::Prepare(qROMIdxRegister, [], qROMGarbage)`);
         tokens.should.deep.equal([
-            createToken("purifiedState", "source.qsharp"),
+            createToken("purifiedState", "variable.other.readwrite.qsharp"),
             createToken("::", "punctuation.accessor.qsharp"),
             createToken("Prepare", "entity.name.function.qsharp"),
             createToken("(", "punctuation.parenthesis.open.qsharp"),
             createToken("qROMIdxRegister", "variable.other.readwrite.qsharp"),
             createToken(",", "punctuation.separator.comma.qsharp"),
-            createToken(" []", "source.qsharp"),
+            createToken(" ", "source.qsharp"),
+            createToken("[", "punctuation.squarebracket.open.qsharp"),
+            createToken("]", "punctuation.squarebracket.close.qsharp"),
             createToken(",", "punctuation.separator.comma.qsharp"),
             createToken(" ", "source.qsharp"),
             createToken("qROMGarbage", "variable.other.readwrite.qsharp"),

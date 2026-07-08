@@ -26,8 +26,12 @@ describe("Literals", () => {
         const tokens = await tokenize("return input == Zero;");
         tokens.should.deep.equal([
             createToken("return", "keyword.control.qsharp"),
-            createToken(" input == ", "source.qsharp"),
-            createToken("Zero", "constant.language.result.zero.qsharp")
+            createToken(" ", "source.qsharp"),
+            createToken("input", "variable.other.readwrite.qsharp"),
+            createToken(" ", "source.qsharp"),
+            createToken("==", "keyword.operator.comparison.qsharp"),
+            createToken(" ", "source.qsharp"),
+            createToken("Zero", "constant.language.result.zero.qsharp"),
         ]);
     });
 
@@ -35,8 +39,12 @@ describe("Literals", () => {
         const tokens = await tokenize("return input == One;");
         tokens.should.deep.equal([
             createToken("return", "keyword.control.qsharp"),
-            createToken(" input == ", "source.qsharp"),
-            createToken("One", "constant.language.result.one.qsharp")
+            createToken(" ", "source.qsharp"),
+            createToken("input", "variable.other.readwrite.qsharp"),
+            createToken(" ", "source.qsharp"),
+            createToken("==", "keyword.operator.comparison.qsharp"),
+            createToken(" ", "source.qsharp"),
+            createToken("One", "constant.language.result.one.qsharp"),
         ]);
     });
 

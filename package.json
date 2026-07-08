@@ -1,6 +1,6 @@
 {
   "name": "qsharp-tmlanguage",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Textmate grammar for Q#.",
   "displayName": "qsharp-tmLanguage",
   "license": "MIT",
@@ -8,24 +8,25 @@
     "url": "https://github.com/filipw/qsharp-tmLanguage/issues"
   },
   "scripts": {
-    "compile": "gulp",
-    "test": "gulp test",
-    "prepublish": "gulp"
+    "build": "node build.js",
+    "compile": "npm run build",
+    "pretest": "npm run build",
+    "test": "mocha",
+    "prepublish": "npm run build"
   },
   "devDependencies": {
-    "@types/chai": "4.3.1",
-    "@types/gulp": "4.0.9",
-    "@types/mocha": "9.1.1",
-    "chai": "4.3.1",
-    "gulp": "4.0.2",
-    "gulp-mocha": "8.0.0",
-    "gulp-typescript": "^6.0.0-alpha.1",
-    "js-yaml": "4.1.0",
-    "mocha": "9.1.1",
-    "plist": "3.0.4",
-    "ts-node": "10.8.1",
-    "typescript": "4.7.3",
-    "vscode-oniguruma": "1.5.1",
-    "vscode-textmate": "5.4.0"
+    "@types/chai": "^4.3.20",
+    "@types/js-yaml": "^4.0.9",
+    "@types/mocha": "^10.0.9",
+    "@types/node": "^22.9.0",
+    "@types/plist": "^3.0.5",
+    "chai": "^4.5.0",
+    "js-yaml": "^4.1.0",
+    "mocha": "^10.8.2",
+    "plist": "^3.1.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.3",
+    "vscode-oniguruma": "^2.0.1",
+    "vscode-textmate": "^9.2.0"
   }
 }

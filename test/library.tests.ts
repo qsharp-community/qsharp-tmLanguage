@@ -4,119 +4,44 @@ import { tokenize, createToken, Token } from './utils/tokenize';
 describe("Library", () => {
     before(() => { should(); });
 
-    it("I", async () => {
-        const tokens = await tokenize("I(qubit)");
-        tokens.should.deep.equal([createToken("I", "support.function.quantum.qsharp")]);
-    });
+    // Bare intrinsic names are scoped as quantum operations.
+    const gates = [
+        "I", "X", "Y", "Z", "H", "S", "T", "SX",
+        "CNOT", "CX", "CY", "CZ", "CCNOT", "SWAP",
+        "Rx", "Ry", "Rz", "Rxx", "Ryy", "Rzz", "R", "R1", "RFrac", "R1Frac", "Exp", "ExpFrac",
+        "M", "Measure", "MResetZ", "MResetX", "MResetY", "MResetEachZ",
+        "MeasureEachZ", "MeasureAllZ", "Reset", "ResetAll",
+    ];
 
-    it("H", async () => {
-        const tokens = await tokenize("H(qubit)");
-        tokens.should.deep.equal([createToken("H", "support.function.quantum.qsharp")]);
-    });
+    for (const gate of gates) {
+        it(gate, async () => {
+            const tokens = await tokenize(gate);
+            tokens.should.deep.equal([
+                createToken(gate, "support.function.quantum.qsharp"),
+            ]);
+        });
+    }
 
-    it("X", async () => {
-        const tokens = await tokenize("X(qubit)");
-        tokens.should.deep.equal([createToken("X", "support.function.quantum.qsharp")]);
-    });
-
-    it("Y", async () => {
-        const tokens = await tokenize("Y(qubit)");
-        tokens.should.deep.equal([createToken("Y", "support.function.quantum.qsharp")]);
-    });
-
-    it("Z", async () => {
-        const tokens = await tokenize("Z(qubit)");
-        tokens.should.deep.equal([createToken("Z", "support.function.quantum.qsharp")]);
-    });
-
-    it("CNOT", async () => {
-        const tokens = await tokenize("CNOT(qubit1, qubit2)");
-        tokens.should.deep.equal([createToken("CNOT", "support.function.quantum.qsharp")]);
-    });
-
-    it("Rx", async () => {
+    it("Intrinsic call keeps gate scope and tokenizes arguments", async () => {
         const tokens = await tokenize("Rx(0.5, qubit)");
         tokens.should.deep.equal([
             createToken("Rx", "support.function.quantum.qsharp"),
-            createToken("(", "source.qsharp"),
+            createToken("(", "punctuation.parenthesis.open.qsharp"),
             createToken("0.5", "constant.numeric.decimal.qsharp"),
+            createToken(",", "punctuation.separator.comma.qsharp"),
+            createToken(" ", "source.qsharp"),
+            createToken("qubit", "variable.other.readwrite.qsharp"),
+            createToken(")", "punctuation.parenthesis.close.qsharp"),
         ]);
     });
 
-    it("Ry", async () => {
-        const tokens = await tokenize("Ry(0.5, qubit)");
+    it("Reset call", async () => {
+        const tokens = await tokenize("Reset(q)");
         tokens.should.deep.equal([
-            createToken("Ry", "support.function.quantum.qsharp"),
-            createToken("(", "source.qsharp"),
-            createToken("0.5", "constant.numeric.decimal.qsharp"),
+            createToken("Reset", "support.function.quantum.qsharp"),
+            createToken("(", "punctuation.parenthesis.open.qsharp"),
+            createToken("q", "variable.other.readwrite.qsharp"),
+            createToken(")", "punctuation.parenthesis.close.qsharp"),
         ]);
-    });
-
-    it("Rz", async () => {
-        const tokens = await tokenize("Rz(0.5, qubit)");
-        tokens.should.deep.equal([
-            createToken("Rz", "support.function.quantum.qsharp"),
-            createToken("(", "source.qsharp"),
-            createToken("0.5", "constant.numeric.decimal.qsharp"),
-        ]);
-    });
-
-    it("R", async () => {
-        const tokens = await tokenize("R(PauliX, 0.5, qubit)");
-        tokens.should.deep.equal([
-            createToken("R", "support.function.quantum.qsharp"),
-            createToken("(", "source.qsharp"),
-            createToken("PauliX", "constant.language.pauli.qsharp"),
-            createToken(", ", "source.qsharp"),
-            createToken("0.5", "constant.numeric.decimal.qsharp"),
-        ]);
-    });
-
-    it("R1", async () => {
-        const tokens = await tokenize("R1(0.5, qubit);");
-        tokens.should.deep.equal([
-            createToken("R1", "support.function.quantum.qsharp"),
-            createToken("(", "source.qsharp"),
-            createToken("0.5", "constant.numeric.decimal.qsharp"),
-        ]);
-    });
-
-    it("RFrac", async () => {
-        const tokens = await tokenize("RFrac(PauliX, 2, 3, qubit);");
-        tokens.should.deep.equal([
-            createToken("RFrac", "support.function.quantum.qsharp"),
-            createToken("(", "source.qsharp"),
-            createToken("PauliX", "constant.language.pauli.qsharp"),
-            createToken(", ", "source.qsharp"),
-            createToken("2", "constant.numeric.decimal.qsharp"),
-            createToken(", ", "source.qsharp"),
-            createToken("3", "constant.numeric.decimal.qsharp"),
-        ]);
-    });
-
-    it("R1Frac", async () => {
-        const tokens = await tokenize("R1Frac(2, 3, qubit);");
-        tokens.should.deep.equal([
-            createToken("R1Frac", "support.function.quantum.qsharp"),
-            createToken("(", "source.qsharp"),
-            createToken("2", "constant.numeric.decimal.qsharp"),
-            createToken(", ", "source.qsharp"),
-            createToken("3", "constant.numeric.decimal.qsharp"),
-        ]);
-    });
-
-    it("M", async () => {
-        const tokens = await tokenize("M(qubit)");
-        tokens.should.deep.equal([createToken("M", "support.function.quantum.qsharp")]);
-    });
-
-    it("Measure", async () => {
-        const tokens = await tokenize("Measure(qubit)");
-        tokens.should.deep.equal([createToken("Measure", "support.function.quantum.qsharp")]);
-    });
-
-    it("MultiM", async () => {
-        const tokens = await tokenize("MultiM(qubits)");
-        tokens.should.deep.equal([createToken("MultiM", "support.function.quantum.qsharp")]);
     });
 });

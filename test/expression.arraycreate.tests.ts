@@ -58,7 +58,7 @@ describe("Expression: Array Creation", () => {
             createToken(")", "punctuation.parenthesis.close.qsharp"),
             createToken(",", "punctuation.separator.comma.qsharp"),
             createToken(" ", "source.qsharp"),
-            createToken("M", "entity.name.function.qsharp"),
+            createToken("M", "support.function.quantum.qsharp"),
             createToken("(", "punctuation.parenthesis.open.qsharp"),
             createToken("qubit", "variable.other.readwrite.qsharp"),
             createToken(")", "punctuation.parenthesis.close.qsharp"),
@@ -102,7 +102,9 @@ describe("Expression: Array Creation", () => {
             createToken(" ", "source.qsharp"),
             createToken("size", "keyword.other.size.qsharp"),
             createToken(" ", "source.qsharp"),
-            createToken("= 3", "source.qsharp"),
+            createToken("=", "keyword.operator.assignment.qsharp"),
+            createToken(" ", "source.qsharp"),
+            createToken("3", "constant.numeric.decimal.qsharp"),
             createToken("]", "punctuation.squarebracket.close.qsharp"),
         ]);
     });

@@ -5,7 +5,7 @@
 
 // adapted from https://github.com/dotnet/csharp-tmLanguage/blob/main/test/utils/tokenize.ts
 
-import { Registry, StackElement, parseRawGrammar, } from 'vscode-textmate';
+import { Registry, StateStack, parseRawGrammar, } from 'vscode-textmate';
 import * as oniguruma from 'vscode-oniguruma';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -13,21 +13,18 @@ import * as path from 'path';
 /**
  * Utility to read a file as a promise
  */
-function readFile(path) {
+function readFile(path: string) {
     return new Promise<Buffer>((resolve, reject) => {
         fs.readFile(path, (error, data) => error ? reject(error) : resolve(data));
     })
 }
 
-// The path is different whether we are running tests from `out/test/**/*.js` or `test/**/*.ts`
-var onigPath = fs.existsSync(path.join(__dirname, '../../node_modules/vscode-oniguruma/release/onig.wasm'))
-    ? path.join(__dirname, '../../node_modules/vscode-oniguruma/release/onig.wasm')
-    : path.join(__dirname, '../../../node_modules/vscode-oniguruma/release/onig.wasm');
-const wasmBin = fs.readFileSync(onigPath).buffer;
-const vscodeOnigurumaLib = oniguruma.loadWASM(wasmBin).then(() => {
+const onigPath = path.join(__dirname, '../../node_modules/vscode-oniguruma/release/onig.wasm');
+const wasmBin = fs.readFileSync(onigPath);
+const vscodeOnigurumaLib = oniguruma.loadWASM(wasmBin.buffer.slice(wasmBin.byteOffset, wasmBin.byteOffset + wasmBin.byteLength)).then(() => {
     return {
-        createOnigScanner(patterns) { return new oniguruma.OnigScanner(patterns); },
-        createOnigString(s) { return new oniguruma.OnigString(s); }
+        createOnigScanner(patterns: string[]) { return new oniguruma.OnigScanner(patterns); },
+        createOnigString(s: string) { return new oniguruma.OnigString(s); }
     };
 });
 
@@ -51,7 +48,7 @@ export async function tokenize(input: string | Input, excludeTypes: boolean = tr
     }
 
     let tokens: Token[] = [];
-    let previousStack: StackElement = null;
+    let previousStack: StateStack | null = null;
     const grammar = await registry.loadGrammar('source.qsharp');
 
     for (let lineIndex = 0; lineIndex < input.lines.length; lineIndex++) {
