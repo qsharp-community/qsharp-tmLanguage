@@ -96,4 +96,42 @@ describe("Expression Operators", () => {
             createToken("}", "punctuation.curlybrace.close.qsharp"),
         ]);
     });
+
+    let bitwise = `let m = a &&& b ||| c;`;
+    it(bitwise, async () => {
+        const tokens = await tokenize(bitwise);
+        tokens.should.deep.equal([
+            createToken("let", "keyword.other.let.qsharp"),
+            createToken(" ", "source.qsharp"),
+            createToken("m", "entity.name.variable.local.qsharp"),
+            createToken(" ", "source.qsharp"),
+            createToken("=", "keyword.operator.assignment.qsharp"),
+            createToken(" ", "source.qsharp"),
+            createToken("a", "variable.other.readwrite.qsharp"),
+            createToken(" ", "source.qsharp"),
+            createToken("&&&", "keyword.operator.bitwise.qsharp"),
+            createToken(" ", "source.qsharp"),
+            createToken("b", "variable.other.readwrite.qsharp"),
+            createToken(" ", "source.qsharp"),
+            createToken("|||", "keyword.operator.bitwise.qsharp"),
+            createToken(" ", "source.qsharp"),
+            createToken("c", "variable.other.readwrite.qsharp"),
+        ]);
+    });
+
+    let tightNotEqual = `let b = a!=c;`;
+    it(tightNotEqual, async () => {
+        const tokens = await tokenize(tightNotEqual);
+        tokens.should.deep.equal([
+            createToken("let", "keyword.other.let.qsharp"),
+            createToken(" ", "source.qsharp"),
+            createToken("b", "entity.name.variable.local.qsharp"),
+            createToken(" ", "source.qsharp"),
+            createToken("=", "keyword.operator.assignment.qsharp"),
+            createToken(" ", "source.qsharp"),
+            createToken("a", "variable.other.readwrite.qsharp"),
+            createToken("!=", "keyword.operator.comparison.qsharp"),
+            createToken("c", "variable.other.readwrite.qsharp"),
+        ]);
+    });
 });

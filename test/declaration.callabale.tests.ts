@@ -26,19 +26,19 @@ describe("Callable declarations", () => {
             createToken("array", "entity.name.variable.parameter.qsharp"),
             createToken(" ", "source.qsharp"),
             createToken(":", "punctuation.separator.colon.qsharp"),
-            createToken(" '", "source.qsharp"),
-            createToken("T", "support.function.quantum.qsharp"),
+            createToken(" ", "source.qsharp"),
+            createToken("'T", "entity.name.type.type-parameter.qsharp"),
             createToken("[", "punctuation.squarebracket.open.qsharp"),
             createToken("]", "punctuation.squarebracket.close.qsharp"),
             createToken(")", "punctuation.parenthesis.close.qsharp"),
-            createToken(" : '", "source.qsharp"),
-            createToken("T", "support.function.quantum.qsharp"),
+            createToken(" : ", "source.qsharp"),
+            createToken("'T", "entity.name.type.type-parameter.qsharp"),
             createToken("[", "punctuation.squarebracket.open.qsharp"),
             createToken("]", "punctuation.squarebracket.close.qsharp"),
         ]);
     });
 
-    it("Twp typed parameters signature", async () => {
+    it("Two typed parameters signature", async () => {
         const tokens = await tokenize(`operation Delay<'T, 'U>(op : ('T => 'U), arg : 'T, aux : Unit) : 'U`);
         tokens.should.deep.equal([
             createToken("operation", "keyword.other.callable.qsharp"),
@@ -54,16 +54,48 @@ describe("Callable declarations", () => {
             createToken("op", "entity.name.variable.parameter.qsharp"),
             createToken(" ", "source.qsharp"),
             createToken(":", "punctuation.separator.colon.qsharp"),
-            createToken(" ('", "source.qsharp"),
-            createToken("T", "support.function.quantum.qsharp"),
-            createToken(" => 'U", "source.qsharp"),
+            createToken(" (", "source.qsharp"),
+            createToken("'T", "entity.name.type.type-parameter.qsharp"),
+            createToken(" ", "source.qsharp"),
+            createToken("=>", "keyword.operator.lambda.qsharp"),
+            createToken(" ", "source.qsharp"),
+            createToken("'U", "entity.name.type.type-parameter.qsharp"),
             createToken(")", "punctuation.parenthesis.close.qsharp"),
-            createToken(", arg : '", "source.qsharp"),
-            createToken("T", "support.function.quantum.qsharp"),
-            createToken(", aux : ", "source.qsharp"),
+            createToken(", ", "source.qsharp"),
+            createToken("arg", "variable.other.readwrite.qsharp"),
+            createToken(" : ", "source.qsharp"),
+            createToken("'T", "entity.name.type.type-parameter.qsharp"),
+            createToken(", ", "source.qsharp"),
+            createToken("aux", "variable.other.readwrite.qsharp"),
+            createToken(" : ", "source.qsharp"),
             createToken("Unit", "storage.type.qsharp"),
+            createToken(") : ", "source.qsharp"),
+            createToken("'U", "entity.name.type.type-parameter.qsharp"),
         ]);
     });
 
-    
+    it("Type parameter with class constraint", async () => {
+        const tokens = await tokenize(`function AllEqual<'T : Eq>(arg : 'T) : Bool`);
+        tokens.should.deep.equal([
+            createToken("function", "keyword.other.callable.qsharp"),
+            createToken(" ", "source.qsharp"),
+            createToken("AllEqual", "entity.name.function.qsharp"),
+            createToken("<", "punctuation.definition.typeparameters.begin.qsharp"),
+            createToken("'T", "entity.name.type.type-parameter.qsharp"),
+            createToken(" ", "source.qsharp"),
+            createToken(":", "punctuation.separator.colon.qsharp"),
+            createToken(" ", "source.qsharp"),
+            createToken("Eq", "support.type.constraint.qsharp"),
+            createToken(">", "punctuation.definition.typeparameters.end.qsharp"),
+            createToken("(", "punctuation.parenthesis.open.qsharp"),
+            createToken("arg", "entity.name.variable.parameter.qsharp"),
+            createToken(" ", "source.qsharp"),
+            createToken(":", "punctuation.separator.colon.qsharp"),
+            createToken(" ", "source.qsharp"),
+            createToken("'T", "entity.name.type.type-parameter.qsharp"),
+            createToken(")", "punctuation.parenthesis.close.qsharp"),
+            createToken(" : ", "source.qsharp"),
+            createToken("Bool", "storage.type.qsharp"),
+        ]);
+    });
 });

@@ -41,7 +41,10 @@ return M(qubit);
             createToken("return", "keyword.control.qsharp"),
             createToken(" ", "source.qsharp"),
             createToken("M", "support.function.quantum.qsharp"),
-            createToken("(qubit);", "source.qsharp"),
+            createToken("(", "punctuation.parenthesis.open.qsharp"),
+            createToken("qubit", "variable.other.readwrite.qsharp"),
+            createToken(")", "punctuation.parenthesis.close.qsharp"),
+            createToken(";", "source.qsharp"),
             createToken("}", "source.qsharp"),
         ]);
     });

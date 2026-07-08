@@ -4,6 +4,24 @@ import { tokenize, createToken, Token } from './utils/tokenize';
 describe("Local declarations", () => {
     before(() => { should(); });
 
+    it("Tuple destructuring", async () => {
+        const tokens = await tokenize(`let (a, b) = pair;`);
+        tokens.should.deep.equal([
+            createToken("let", "keyword.other.qsharp"),
+            createToken(" ", "source.qsharp"),
+            createToken("(", "punctuation.parenthesis.open.qsharp"),
+            createToken("a", "variable.other.readwrite.qsharp"),
+            createToken(",", "punctuation.separator.comma.qsharp"),
+            createToken(" ", "source.qsharp"),
+            createToken("b", "variable.other.readwrite.qsharp"),
+            createToken(")", "punctuation.parenthesis.close.qsharp"),
+            createToken(" ", "source.qsharp"),
+            createToken("=", "keyword.operator.assignment.qsharp"),
+            createToken(" ", "source.qsharp"),
+            createToken("pair", "variable.other.readwrite.qsharp"),
+        ]);
+    });
+
     it("Immutable simple numeric", async () => {
         const tokens = await tokenize(`let foo = 1.0;`);
         tokens.should.deep.equal([
@@ -141,7 +159,7 @@ describe("Local declarations", () => {
             createToken(" ", "source.qsharp"),
             createToken("=", "keyword.operator.assignment.qsharp"),
             createToken(" ", "source.qsharp"),
-            createToken("M", "entity.name.function.qsharp"),
+            createToken("M", "support.function.quantum.qsharp"),
             createToken("(", "punctuation.parenthesis.open.qsharp"),
             createToken("qubit", "variable.other.readwrite.qsharp"),
             createToken(")", "punctuation.parenthesis.close.qsharp"),
@@ -157,7 +175,7 @@ describe("Local declarations", () => {
             createToken(" ", "source.qsharp"),
             createToken("=", "keyword.operator.assignment.qsharp"),
             createToken(" ", "source.qsharp"),
-            createToken("M", "entity.name.function.qsharp"),
+            createToken("M", "support.function.quantum.qsharp"),
             createToken("(", "punctuation.parenthesis.open.qsharp"),
             createToken("qubit", "variable.other.readwrite.qsharp"),
             createToken(")", "punctuation.parenthesis.close.qsharp"),
@@ -173,7 +191,7 @@ describe("Local declarations", () => {
             createToken(" ", "source.qsharp"),
             createToken("=", "keyword.operator.assignment.qsharp"),
             createToken(" ", "source.qsharp"),
-            createToken("M", "entity.name.function.qsharp"),
+            createToken("M", "support.function.quantum.qsharp"),
             createToken("(", "punctuation.parenthesis.open.qsharp"),
             createToken("qubit", "variable.other.readwrite.qsharp"),
             createToken(")", "punctuation.parenthesis.close.qsharp"),

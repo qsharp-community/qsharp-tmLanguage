@@ -18,11 +18,39 @@
       </dict>
       <dict>
         <key>include</key>
+        <string>#attributes</string>
+      </dict>
+      <dict>
+        <key>include</key>
         <string>#namespace-declaration</string>
       </dict>
       <dict>
         <key>include</key>
+        <string>#import-export-directive</string>
+      </dict>
+      <dict>
+        <key>include</key>
+        <string>#new-expression</string>
+      </dict>
+      <dict>
+        <key>include</key>
+        <string>#struct-declaration</string>
+      </dict>
+      <dict>
+        <key>include</key>
+        <string>#member-access</string>
+      </dict>
+      <dict>
+        <key>include</key>
+        <string>#tuple-binding</string>
+      </dict>
+      <dict>
+        <key>include</key>
         <string>#keywords</string>
+      </dict>
+      <dict>
+        <key>include</key>
+        <string>#library-invocation</string>
       </dict>
       <dict>
         <key>include</key>
@@ -79,6 +107,18 @@
       <dict>
         <key>include</key>
         <string>#if-statement</string>
+      </dict>
+      <dict>
+        <key>include</key>
+        <string>#parenthesized-expression</string>
+      </dict>
+      <dict>
+        <key>include</key>
+        <string>#expression-operators</string>
+      </dict>
+      <dict>
+        <key>include</key>
+        <string>#identifier</string>
       </dict>
     </array>
     <key>repository</key>
@@ -168,24 +208,21 @@
             <key>name</key>
             <string>keyword.control.qsharp</string>
             <key>match</key>
-            <string>\b(using|borrowing|elif|else|repeat|until|fixup|for|in|while|return|fail|within|apply)\b</string>
+            <string>\b(elif|else|repeat|until|fixup|for|in|while|return|fail|within|apply)\b</string>
+          </dict>
+          <dict>
+            <key>comment</key>
+            <string>legacy allocation keywords (QDK &lt;1.0)</string>
+            <key>name</key>
+            <string>keyword.other.qsharp</string>
+            <key>match</key>
+            <string>\b(using|borrowing)\b</string>
           </dict>
           <dict>
             <key>name</key>
             <string>keyword.other.qsharp</string>
             <key>match</key>
-            <string>\b(new|w\/)\b</string>
-          </dict>
-          <dict>
-            <key>comment</key>
-            <string>C# reserved words which can't be used in Q#</string>
-            <key>name</key>
-            <string>invalid.illegal.qsharp</string>
-            <key>match</key>
-            <string>\b(abstract|base|bool|break|byte|case|catch|char|checked|class|const|continue|decimal|default|delegate|do|double)\b
-\b(enum|event|explicit|extern|finally|fixed|float|foreach|goto|implicit|int|interface|lock|long)\b
-\b(null|object|operator|out|override|params|private|protected|public|readonly|ref|sbyte|sealed|short|sizeof|stackalloc)\b
-\b(static|string|struct|switch|this|throw|try|typeof|unit|ulong|unchecked|unsafe|ushort|virtual|void|volatile)\b</string>
+            <string>\b(new)\b</string>
           </dict>
         </array>
       </dict>
@@ -197,7 +234,7 @@
             <key>name</key>
             <string>keyword.other.qsharp</string>
             <key>match</key>
-            <string>\b(as|internal|body|(a|A)djoint|(c|C)ontrolled|self|auto|distribute|invert|intrinsic)\b</string>
+            <string>\b(as|internal|body|(a|A)djoint|(c|C)ontrolled|self|auto|distribute|invert|intrinsic|is)\b</string>
           </dict>
         </array>
       </dict>
@@ -206,16 +243,27 @@
         <key>patterns</key>
         <array>
           <dict>
+            <key>include</key>
+            <string>#type-parameter</string>
+          </dict>
+          <dict>
             <key>name</key>
             <string>storage.type.qsharp</string>
             <key>match</key>
-            <string>\b(Int|BigInt|Double|Bool|Qubit|Pauli|Result|Range|String|Unit|Ctl|Adj|is)\b</string>
+            <string>\b(Int|BigInt|Double|Bool|Qubit|Pauli|Result|Range|String|Unit|Ctl|Adj)\b</string>
           </dict>
           <dict>
             <key>include</key>
             <string>#type-array-suffix</string>
           </dict>
         </array>
+      </dict>
+      <key>type-parameter</key>
+      <dict>
+        <key>name</key>
+        <string>entity.name.type.type-parameter.qsharp</string>
+        <key>match</key>
+        <string>'[_[:alpha:]][_[:alnum:]]*</string>
       </dict>
       <key>library</key>
       <dict>
@@ -225,7 +273,65 @@
             <key>name</key>
             <string>support.function.quantum.qsharp</string>
             <key>match</key>
-            <string>\b(I|X|Y|Z|H|HY|S|T|SWAP|CNOT|CCNOT|MultiX|R|RFrac|Rx|Ry|Rz|R1|R1Frac|Exp|ExpFrac|Measure|M|MultiM)\b</string>
+            <string>\b(CCNOT|CNOT|CX|CY|CZ|SWAP|SX|H|S|T|I|X|Y|Z|Rxx|Ryy|Rzz|Rx|Ry|Rz|R1Frac|R1|RFrac|R|ExpFrac|Exp|MResetEachZ|MResetX|MResetY|MResetZ|MeasureEachZ|MeasureAllZ|Measure|M|ResetAll|Reset)\b</string>
+          </dict>
+        </array>
+      </dict>
+      <key>library-invocation</key>
+      <dict>
+        <key>begin</key>
+        <string>(?x)
+\b(CCNOT|CNOT|CX|CY|CZ|SWAP|SX|H|S|T|I|X|Y|Z|Rxx|Ryy|Rzz|Rx|Ry|Rz|R1Frac|R1|RFrac|R|ExpFrac|Exp|MResetEachZ|MResetX|MResetY|MResetZ|MeasureEachZ|MeasureAllZ|Measure|M|ResetAll|Reset)\b\s*
+(?=\()</string>
+        <key>beginCaptures</key>
+        <dict>
+          <key>1</key>
+          <dict>
+            <key>name</key>
+            <string>support.function.quantum.qsharp</string>
+          </dict>
+        </dict>
+        <key>end</key>
+        <string>(?&lt;=\))</string>
+        <key>patterns</key>
+        <array>
+          <dict>
+            <key>include</key>
+            <string>#argument-list</string>
+          </dict>
+        </array>
+      </dict>
+      <key>parenthesized-expression</key>
+      <dict>
+        <key>begin</key>
+        <string>\(</string>
+        <key>beginCaptures</key>
+        <dict>
+          <key>0</key>
+          <dict>
+            <key>name</key>
+            <string>punctuation.parenthesis.open.qsharp</string>
+          </dict>
+        </dict>
+        <key>end</key>
+        <string>\)</string>
+        <key>endCaptures</key>
+        <dict>
+          <key>0</key>
+          <dict>
+            <key>name</key>
+            <string>punctuation.parenthesis.close.qsharp</string>
+          </dict>
+        </dict>
+        <key>patterns</key>
+        <array>
+          <dict>
+            <key>include</key>
+            <string>#expression</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#punctuation-comma</string>
           </dict>
         </array>
       </dict>
@@ -235,9 +341,73 @@
         <array>
           <dict>
             <key>name</key>
+            <string>string.quoted.double.interpolated.qsharp</string>
+            <key>begin</key>
+            <string>\$"</string>
+            <key>beginCaptures</key>
+            <dict>
+              <key>0</key>
+              <dict>
+                <key>name</key>
+                <string>punctuation.definition.string.begin.qsharp</string>
+              </dict>
+            </dict>
+            <key>end</key>
+            <string>"</string>
+            <key>endCaptures</key>
+            <dict>
+              <key>0</key>
+              <dict>
+                <key>name</key>
+                <string>punctuation.definition.string.end.qsharp</string>
+              </dict>
+            </dict>
+            <key>patterns</key>
+            <array>
+              <dict>
+                <key>name</key>
+                <string>constant.character.escape.qsharp</string>
+                <key>match</key>
+                <string>\\.</string>
+              </dict>
+              <dict>
+                <key>name</key>
+                <string>meta.interpolation.qsharp</string>
+                <key>begin</key>
+                <string>\{</string>
+                <key>beginCaptures</key>
+                <dict>
+                  <key>0</key>
+                  <dict>
+                    <key>name</key>
+                    <string>punctuation.section.interpolation.begin.qsharp</string>
+                  </dict>
+                </dict>
+                <key>end</key>
+                <string>\}</string>
+                <key>endCaptures</key>
+                <dict>
+                  <key>0</key>
+                  <dict>
+                    <key>name</key>
+                    <string>punctuation.section.interpolation.end.qsharp</string>
+                  </dict>
+                </dict>
+                <key>patterns</key>
+                <array>
+                  <dict>
+                    <key>include</key>
+                    <string>#expression</string>
+                  </dict>
+                </array>
+              </dict>
+            </array>
+          </dict>
+          <dict>
+            <key>name</key>
             <string>string.quoted.double.qsharp</string>
             <key>begin</key>
-            <string>(\$|)"</string>
+            <string>"</string>
             <key>end</key>
             <string>"</string>
             <key>patterns</key>
@@ -307,7 +477,35 @@
               </dict>
               <dict>
                 <key>include</key>
+                <string>#attributes</string>
+              </dict>
+              <dict>
+                <key>include</key>
+                <string>#import-export-directive</string>
+              </dict>
+              <dict>
+                <key>include</key>
+                <string>#new-expression</string>
+              </dict>
+              <dict>
+                <key>include</key>
+                <string>#struct-declaration</string>
+              </dict>
+              <dict>
+                <key>include</key>
+                <string>#member-access</string>
+              </dict>
+              <dict>
+                <key>include</key>
+                <string>#tuple-binding</string>
+              </dict>
+              <dict>
+                <key>include</key>
                 <string>#keywords</string>
+              </dict>
+              <dict>
+                <key>include</key>
+                <string>#library-invocation</string>
               </dict>
               <dict>
                 <key>include</key>
@@ -367,11 +565,19 @@
               </dict>
               <dict>
                 <key>include</key>
+                <string>#if-statement</string>
+              </dict>
+              <dict>
+                <key>include</key>
+                <string>#parenthesized-expression</string>
+              </dict>
+              <dict>
+                <key>include</key>
                 <string>#expression-operators</string>
               </dict>
               <dict>
                 <key>include</key>
-                <string>#if-statement</string>
+                <string>#identifier</string>
               </dict>
             </array>
           </dict>
@@ -381,8 +587,9 @@
       <dict>
         <key>begin</key>
         <string>(?x)
-(?:(\:\:)\s*)?                                      # preceding member access
-([_[:alpha:]][_[:alnum:]]*)\s*                      # callable name
+(?:(\:\:|\.)\s*)?                                   # preceding member access (:: or .)
+(?!(?:let|mutable|set|use|borrow|new|fixup|for|in|while|repeat|until|return|fail|within|apply|if|elif|else|not|and|or|namespace|import|export|open|operation|function|struct|newtype|internal|is)\b)
+([_[:alpha:]][_[:alnum:]]*)\s*                      # callable name (not a keyword)
 (?&lt;type_args&gt;\s*&lt;([^&lt;&gt;]|\g&lt;type_args&gt;)+&gt;\s*)?\s*    # type arguments
 (?=\()                                              # open parentheses of argument list</string>
         <key>beginCaptures</key>
@@ -496,6 +703,36 @@
             </dict>
           </dict>
           <dict>
+            <key>name</key>
+            <string>punctuation.separator.colon.qsharp</string>
+            <key>match</key>
+            <string>:</string>
+          </dict>
+          <dict>
+            <key>name</key>
+            <string>keyword.operator.qsharp</string>
+            <key>match</key>
+            <string>\+</string>
+          </dict>
+          <dict>
+            <key>name</key>
+            <string>support.type.constraint.qsharp</string>
+            <key>match</key>
+            <string>\b(Eq|Add|Sub|Mul|Div|Mod|Signed|Ord|Show|Integral|Exp)\b</string>
+          </dict>
+          <dict>
+            <key>name</key>
+            <string>punctuation.squarebracket.open.qsharp</string>
+            <key>match</key>
+            <string>\[</string>
+          </dict>
+          <dict>
+            <key>name</key>
+            <string>punctuation.squarebracket.close.qsharp</string>
+            <key>match</key>
+            <string>\]</string>
+          </dict>
+          <dict>
             <key>include</key>
             <string>#punctuation-comma</string>
           </dict>
@@ -581,21 +818,10 @@
         <key>patterns</key>
         <array>
           <dict>
+            <key>name</key>
+            <string>variable.other.readwrite.qsharp</string>
             <key>match</key>
-            <string>([_[:alpha:]][_[:alnum:]]*)(\!*)?</string>
-            <key>captures</key>
-            <dict>
-              <key>1</key>
-              <dict>
-                <key>name</key>
-                <string>variable.other.readwrite.qsharp</string>
-              </dict>
-              <key>2</key>
-              <dict>
-                <key>name</key>
-                <string>keyword.operator.unwrap.qsharp</string>
-              </dict>
-            </dict>
+            <string>\b[_[:alpha:]][_[:alnum:]]*\b</string>
           </dict>
         </array>
       </dict>
@@ -605,31 +831,7 @@
         <array>
           <dict>
             <key>include</key>
-            <string>#callable-invocation</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#strings</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#types</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#library</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#literals</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#expression-operators</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#identifier</string>
+            <string>#expression</string>
           </dict>
         </array>
       </dict>
@@ -702,7 +904,7 @@
           </dict>
           <dict>
             <key>include</key>
-            <string>#literals</string>
+            <string>#expression</string>
           </dict>
         </array>
       </dict>
@@ -733,7 +935,7 @@
               </dict>
             </dict>
             <key>end</key>
-            <string>(?=\())</string>
+            <string>(?=\s*=)</string>
           </dict>
           <dict>
             <key>begin</key>
@@ -800,6 +1002,527 @@
                 <string>#library</string>
               </dict>
             </array>
+          </dict>
+        </array>
+      </dict>
+      <key>struct-declaration</key>
+      <dict>
+        <key>begin</key>
+        <string>(?x)
+\b(struct)\b\s+
+([_[:alpha:]][_[:alnum:]]*)</string>
+        <key>beginCaptures</key>
+        <dict>
+          <key>1</key>
+          <dict>
+            <key>name</key>
+            <string>keyword.other.struct.qsharp</string>
+          </dict>
+          <key>2</key>
+          <dict>
+            <key>name</key>
+            <string>entity.name.type.struct.qsharp</string>
+          </dict>
+        </dict>
+        <key>end</key>
+        <string>(?&lt;=\})</string>
+        <key>patterns</key>
+        <array>
+          <dict>
+            <key>include</key>
+            <string>#comments</string>
+          </dict>
+          <dict>
+            <key>begin</key>
+            <string>\{</string>
+            <key>beginCaptures</key>
+            <dict>
+              <key>0</key>
+              <dict>
+                <key>name</key>
+                <string>punctuation.curlybrace.open.qsharp</string>
+              </dict>
+            </dict>
+            <key>end</key>
+            <string>\}</string>
+            <key>endCaptures</key>
+            <dict>
+              <key>0</key>
+              <dict>
+                <key>name</key>
+                <string>punctuation.curlybrace.close.qsharp</string>
+              </dict>
+            </dict>
+            <key>patterns</key>
+            <array>
+              <dict>
+                <key>include</key>
+                <string>#comments</string>
+              </dict>
+              <dict>
+                <key>include</key>
+                <string>#struct-field</string>
+              </dict>
+              <dict>
+                <key>include</key>
+                <string>#punctuation-comma</string>
+              </dict>
+              <dict>
+                <key>include</key>
+                <string>#types</string>
+              </dict>
+              <dict>
+                <key>include</key>
+                <string>#library</string>
+              </dict>
+            </array>
+          </dict>
+        </array>
+      </dict>
+      <key>struct-field</key>
+      <dict>
+        <key>begin</key>
+        <string>([_[:alpha:]][_[:alnum:]]*)\s*(:)</string>
+        <key>beginCaptures</key>
+        <dict>
+          <key>1</key>
+          <dict>
+            <key>name</key>
+            <string>variable.other.property.qsharp</string>
+          </dict>
+          <key>2</key>
+          <dict>
+            <key>name</key>
+            <string>punctuation.separator.colon.qsharp</string>
+          </dict>
+        </dict>
+        <key>end</key>
+        <string>(?=(,|\}))</string>
+        <key>patterns</key>
+        <array>
+          <dict>
+            <key>include</key>
+            <string>#type-parameter</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#types</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#library</string>
+          </dict>
+        </array>
+      </dict>
+      <key>new-expression</key>
+      <dict>
+        <key>begin</key>
+        <string>(?x)
+\b(new)\b\s+
+([_[:alpha:]][_[:alnum:]]*)\s*
+(?=\{)</string>
+        <key>beginCaptures</key>
+        <dict>
+          <key>1</key>
+          <dict>
+            <key>name</key>
+            <string>keyword.other.new.qsharp</string>
+          </dict>
+          <key>2</key>
+          <dict>
+            <key>name</key>
+            <string>entity.name.type.struct.qsharp</string>
+          </dict>
+        </dict>
+        <key>end</key>
+        <string>(?&lt;=\})</string>
+        <key>patterns</key>
+        <array>
+          <dict>
+            <key>begin</key>
+            <string>\{</string>
+            <key>beginCaptures</key>
+            <dict>
+              <key>0</key>
+              <dict>
+                <key>name</key>
+                <string>punctuation.curlybrace.open.qsharp</string>
+              </dict>
+            </dict>
+            <key>end</key>
+            <string>\}</string>
+            <key>endCaptures</key>
+            <dict>
+              <key>0</key>
+              <dict>
+                <key>name</key>
+                <string>punctuation.curlybrace.close.qsharp</string>
+              </dict>
+            </dict>
+            <key>patterns</key>
+            <array>
+              <dict>
+                <key>include</key>
+                <string>#comments</string>
+              </dict>
+              <dict>
+                <key>include</key>
+                <string>#spread-operator</string>
+              </dict>
+              <dict>
+                <key>include</key>
+                <string>#field-initializer</string>
+              </dict>
+              <dict>
+                <key>include</key>
+                <string>#punctuation-comma</string>
+              </dict>
+              <dict>
+                <key>include</key>
+                <string>#expression</string>
+              </dict>
+            </array>
+          </dict>
+        </array>
+      </dict>
+      <key>field-initializer</key>
+      <dict>
+        <key>begin</key>
+        <string>([_[:alpha:]][_[:alnum:]]*)\s*(=)(?![=&gt;])</string>
+        <key>beginCaptures</key>
+        <dict>
+          <key>1</key>
+          <dict>
+            <key>name</key>
+            <string>variable.other.property.qsharp</string>
+          </dict>
+          <key>2</key>
+          <dict>
+            <key>name</key>
+            <string>keyword.operator.assignment.qsharp</string>
+          </dict>
+        </dict>
+        <key>end</key>
+        <string>(?=(,|\}))</string>
+        <key>patterns</key>
+        <array>
+          <dict>
+            <key>include</key>
+            <string>#expression</string>
+          </dict>
+        </array>
+      </dict>
+      <key>spread-operator</key>
+      <dict>
+        <key>name</key>
+        <string>keyword.operator.spread.qsharp</string>
+        <key>match</key>
+        <string>\.\.\.</string>
+      </dict>
+      <key>statements</key>
+      <dict>
+        <key>patterns</key>
+        <array>
+          <dict>
+            <key>include</key>
+            <string>#comments</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#attributes</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#import-export-directive</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#open-directive</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#new-expression</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#struct-declaration</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#member-access</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#tuple-binding</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#keywords</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#library-invocation</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#library</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#operations</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#types</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#literals</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#strings</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#callable-invocation</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#callable-declaration</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#udt-declaration</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#array-creation-expression</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#local-declaration</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#array-assignment</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#local-assignment</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#quantum-declaration</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#if-statement</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#parenthesized-expression</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#expression-operators</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#identifier</string>
+          </dict>
+        </array>
+      </dict>
+      <key>expression</key>
+      <dict>
+        <key>patterns</key>
+        <array>
+          <dict>
+            <key>include</key>
+            <string>#comments</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#if-statement</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#new-expression</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#strings</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#member-access</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#library-invocation</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#callable-invocation</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#library</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#types</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#literals</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#parenthesized-expression</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#array-creation-expression</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#expression-operators</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#identifier</string>
+          </dict>
+        </array>
+      </dict>
+      <key>member-access</key>
+      <dict>
+        <key>match</key>
+        <string>(?x)
+(\.)\s*
+([_[:alpha:]][_[:alnum:]]*)\b
+(?!\s*\()</string>
+        <key>captures</key>
+        <dict>
+          <key>1</key>
+          <dict>
+            <key>name</key>
+            <string>punctuation.accessor.qsharp</string>
+          </dict>
+          <key>2</key>
+          <dict>
+            <key>name</key>
+            <string>variable.other.property.qsharp</string>
+          </dict>
+        </dict>
+      </dict>
+      <key>attributes</key>
+      <dict>
+        <key>patterns</key>
+        <array>
+          <dict>
+            <key>begin</key>
+            <string>(@)([_[:alpha:]][_[:alnum:]]*)\s*(?=\()</string>
+            <key>beginCaptures</key>
+            <dict>
+              <key>1</key>
+              <dict>
+                <key>name</key>
+                <string>punctuation.definition.attribute.qsharp</string>
+              </dict>
+              <key>2</key>
+              <dict>
+                <key>name</key>
+                <string>entity.name.function.attribute.qsharp</string>
+              </dict>
+            </dict>
+            <key>end</key>
+            <string>(?&lt;=\))</string>
+            <key>patterns</key>
+            <array>
+              <dict>
+                <key>include</key>
+                <string>#argument-list</string>
+              </dict>
+            </array>
+          </dict>
+          <dict>
+            <key>match</key>
+            <string>(@)([_[:alpha:]][_[:alnum:]]*)</string>
+            <key>captures</key>
+            <dict>
+              <key>1</key>
+              <dict>
+                <key>name</key>
+                <string>punctuation.definition.attribute.qsharp</string>
+              </dict>
+              <key>2</key>
+              <dict>
+                <key>name</key>
+                <string>entity.name.function.attribute.qsharp</string>
+              </dict>
+            </dict>
+          </dict>
+        </array>
+      </dict>
+      <key>import-export-directive</key>
+      <dict>
+        <key>begin</key>
+        <string>\b(import|export)\b</string>
+        <key>beginCaptures</key>
+        <dict>
+          <key>1</key>
+          <dict>
+            <key>name</key>
+            <string>keyword.other.import.qsharp</string>
+          </dict>
+        </dict>
+        <key>end</key>
+        <string>(?=;)|$</string>
+        <key>patterns</key>
+        <array>
+          <dict>
+            <key>begin</key>
+            <string>\b(as)\b\s*</string>
+            <key>beginCaptures</key>
+            <dict>
+              <key>1</key>
+              <dict>
+                <key>name</key>
+                <string>keyword.other.qsharp</string>
+              </dict>
+            </dict>
+            <key>end</key>
+            <string>(?=(,|;)|$)</string>
+            <key>patterns</key>
+            <array>
+              <dict>
+                <key>name</key>
+                <string>entity.name.type.alias.qsharp</string>
+                <key>match</key>
+                <string>[_[:alpha:]][_[:alnum:]]*</string>
+              </dict>
+            </array>
+          </dict>
+          <dict>
+            <key>name</key>
+            <string>keyword.operator.wildcard.qsharp</string>
+            <key>match</key>
+            <string>\*</string>
+          </dict>
+          <dict>
+            <key>name</key>
+            <string>entity.name.namespace.qsharp</string>
+            <key>match</key>
+            <string>[_[:alpha:]][_[:alnum:]]*</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#punctuation-accessor</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#punctuation-comma</string>
           </dict>
         </array>
       </dict>
@@ -912,10 +1635,36 @@
       </dict>
       <key>numeric-literal</key>
       <dict>
-        <key>name</key>
-        <string>constant.numeric.decimal.qsharp</string>
-        <key>match</key>
-        <string>(?&lt;!\w)\.?\d(?:[0-9a-zA-Z_\.])*</string>
+        <key>patterns</key>
+        <array>
+          <dict>
+            <key>name</key>
+            <string>constant.numeric.hexadecimal.qsharp</string>
+            <key>match</key>
+            <string>\b0[xX][0-9a-fA-F][0-9a-fA-F_]*[lL]?\b</string>
+          </dict>
+          <dict>
+            <key>name</key>
+            <string>constant.numeric.binary.qsharp</string>
+            <key>match</key>
+            <string>\b0[bB][01][01_]*[lL]?\b</string>
+          </dict>
+          <dict>
+            <key>name</key>
+            <string>constant.numeric.octal.qsharp</string>
+            <key>match</key>
+            <string>\b0[oO][0-7][0-7_]*[lL]?\b</string>
+          </dict>
+          <dict>
+            <key>name</key>
+            <string>constant.numeric.decimal.qsharp</string>
+            <key>match</key>
+            <string>(?x)
+\b\d[\d_]* \. \d[\d_]* (?:[eE][+-]?\d+)?    # 1.0   3.14   1.0e-3
+| \b\d[\d_]* [eE][+-]?\d+                    # 1e10
+| \b\d[\d_]* [lL]?                           # 42   42L   1_000</string>
+          </dict>
+        </array>
       </dict>
       <key>array-creation-expression</key>
       <dict>
@@ -954,6 +1703,13 @@
                 <string>keyword.other.size.qsharp</string>
               </dict>
             </dict>
+            <key>patterns</key>
+            <array>
+              <dict>
+                <key>include</key>
+                <string>#expression</string>
+              </dict>
+            </array>
           </dict>
           <dict>
             <key>include</key>
@@ -997,6 +1753,48 @@
           <dict>
             <key>include</key>
             <string>#variable-initializer</string>
+          </dict>
+        </array>
+      </dict>
+      <key>tuple-binding</key>
+      <dict>
+        <key>patterns</key>
+        <array>
+          <dict>
+            <key>match</key>
+            <string>\b(let|mutable|set)\b(?=\s*\()</string>
+            <key>captures</key>
+            <dict>
+              <key>1</key>
+              <dict>
+                <key>name</key>
+                <string>keyword.other.qsharp</string>
+              </dict>
+            </dict>
+          </dict>
+          <dict>
+            <key>match</key>
+            <string>\b(use)\b(?=\s*\()</string>
+            <key>captures</key>
+            <dict>
+              <key>1</key>
+              <dict>
+                <key>name</key>
+                <string>keyword.other.use.qsharp</string>
+              </dict>
+            </dict>
+          </dict>
+          <dict>
+            <key>match</key>
+            <string>\b(borrow)\b(?=\s*\()</string>
+            <key>captures</key>
+            <dict>
+              <key>1</key>
+              <dict>
+                <key>name</key>
+                <string>keyword.other.borrow.qsharp</string>
+              </dict>
+            </dict>
           </dict>
         </array>
       </dict>
@@ -1136,35 +1934,7 @@
         <array>
           <dict>
             <key>include</key>
-            <string>#expression-operators</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#callable-invocation</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#strings</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#types</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#library</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#literals</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#identifier</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#array-creation-expression</string>
+            <string>#expression</string>
           </dict>
         </array>
       </dict>
@@ -1181,40 +1951,14 @@
           </dict>
         </dict>
         <key>end</key>
-        <string>(?&lt;=})|(?=;)</string>
+        <string>(?&lt;=})(?!\s*\b(?:elif|else)\b)|(?=;)</string>
         <key>patterns</key>
         <array>
           <dict>
-            <key>include</key>
-            <string>#expression-operators</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#callable-invocation</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#strings</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#types</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#library</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#literals</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#identifier</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#array-creation-expression</string>
+            <key>name</key>
+            <string>keyword.control.conditional.qsharp</string>
+            <key>match</key>
+            <string>\b(elif|else)\b</string>
           </dict>
           <dict>
             <key>begin</key>
@@ -1237,6 +1981,17 @@
                 <string>punctuation.curlybrace.close.qsharp</string>
               </dict>
             </dict>
+            <key>patterns</key>
+            <array>
+              <dict>
+                <key>include</key>
+                <string>#statements</string>
+              </dict>
+            </array>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#expression</string>
           </dict>
         </array>
       </dict>
@@ -1252,9 +2007,57 @@
           </dict>
           <dict>
             <key>name</key>
+            <string>keyword.operator.lambda.qsharp</string>
+            <key>match</key>
+            <string>(-&gt;|=&gt;)</string>
+          </dict>
+          <dict>
+            <key>name</key>
+            <string>keyword.operator.assignment.compound.qsharp</string>
+            <key>match</key>
+            <string>(\+=|-=|\*=|/=|%=|\^=|&amp;&amp;&amp;=|\|\|\|=|\^\^\^=|&lt;&lt;&lt;=|&gt;&gt;&gt;=|\bw/=)</string>
+          </dict>
+          <dict>
+            <key>name</key>
+            <string>keyword.operator.copy-update.qsharp</string>
+            <key>match</key>
+            <string>(\bw/|&lt;-)</string>
+          </dict>
+          <dict>
+            <key>name</key>
+            <string>keyword.operator.assignment.qsharp</string>
+            <key>match</key>
+            <string>(?&lt;![=&lt;&gt;!+\-*/%^&amp;|~])=(?![=&gt;])</string>
+          </dict>
+          <dict>
+            <key>name</key>
+            <string>keyword.operator.range.qsharp</string>
+            <key>match</key>
+            <string>(\.\.\.|\.\.)</string>
+          </dict>
+          <dict>
+            <key>name</key>
+            <string>keyword.operator.bitwise.qsharp</string>
+            <key>match</key>
+            <string>(&amp;&amp;&amp;|\|\|\||\^\^\^|~~~|&lt;&lt;&lt;|&gt;&gt;&gt;)</string>
+          </dict>
+          <dict>
+            <key>name</key>
             <string>keyword.operator.comparison.qsharp</string>
             <key>match</key>
-            <string>==|!=</string>
+            <string>(==|!=|&lt;=|&gt;=|&lt;|&gt;)</string>
+          </dict>
+          <dict>
+            <key>name</key>
+            <string>keyword.operator.arithmetic.qsharp</string>
+            <key>match</key>
+            <string>(\+|\-|\*|/|%|\^)</string>
+          </dict>
+          <dict>
+            <key>name</key>
+            <string>keyword.operator.ternary.qsharp</string>
+            <key>match</key>
+            <string>(\?|\|)</string>
           </dict>
         </array>
       </dict>
@@ -1311,27 +2114,7 @@
         <array>
           <dict>
             <key>include</key>
-            <string>#expression-operators</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#callable-invocation</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#types</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#literals</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#identifier</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#array-creation-expression</string>
+            <string>#expression</string>
           </dict>
         </array>
       </dict>

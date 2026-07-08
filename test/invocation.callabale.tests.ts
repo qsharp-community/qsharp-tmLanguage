@@ -67,13 +67,15 @@ describe("Callable invocation", () => {
     it("Member access invocation", async () => {
         const tokens = await tokenize(`purifiedState::Prepare(qROMIdxRegister, [], qROMGarbage)`);
         tokens.should.deep.equal([
-            createToken("purifiedState", "source.qsharp"),
+            createToken("purifiedState", "variable.other.readwrite.qsharp"),
             createToken("::", "punctuation.accessor.qsharp"),
             createToken("Prepare", "entity.name.function.qsharp"),
             createToken("(", "punctuation.parenthesis.open.qsharp"),
             createToken("qROMIdxRegister", "variable.other.readwrite.qsharp"),
             createToken(",", "punctuation.separator.comma.qsharp"),
-            createToken(" []", "source.qsharp"),
+            createToken(" ", "source.qsharp"),
+            createToken("[", "punctuation.squarebracket.open.qsharp"),
+            createToken("]", "punctuation.squarebracket.close.qsharp"),
             createToken(",", "punctuation.separator.comma.qsharp"),
             createToken(" ", "source.qsharp"),
             createToken("qROMGarbage", "variable.other.readwrite.qsharp"),
@@ -81,24 +83,16 @@ describe("Callable invocation", () => {
         ]);
     });
 
-    it("Unwrapped argument", async () => {
-        const tokens = await tokenize(`Length(xs!)`);
+    it("Qualified call keeps the accessor dot scoped", async () => {
+        const tokens = await tokenize(`Std.Diagnostics.Fact(x)`);
         tokens.should.deep.equal([
-            createToken("Length", "entity.name.function.qsharp"),
+            createToken("Std", "variable.other.readwrite.qsharp"),
+            createToken(".", "punctuation.accessor.qsharp"),
+            createToken("Diagnostics", "variable.other.property.qsharp"),
+            createToken(".", "punctuation.accessor.qsharp"),
+            createToken("Fact", "entity.name.function.qsharp"),
             createToken("(", "punctuation.parenthesis.open.qsharp"),
-            createToken("xs", "variable.other.readwrite.qsharp"),
-            createToken("!", "keyword.operator.unwrap.qsharp"),
-            createToken(")", "punctuation.parenthesis.close.qsharp"),
-        ]);
-    });
-
-    it("Double unwrapped argument", async () => {
-        const tokens = await tokenize(`Length(xs!!)`);
-        tokens.should.deep.equal([
-            createToken("Length", "entity.name.function.qsharp"),
-            createToken("(", "punctuation.parenthesis.open.qsharp"),
-            createToken("xs", "variable.other.readwrite.qsharp"),
-            createToken("!!", "keyword.operator.unwrap.qsharp"),
+            createToken("x", "variable.other.readwrite.qsharp"),
             createToken(")", "punctuation.parenthesis.close.qsharp"),
         ]);
     });

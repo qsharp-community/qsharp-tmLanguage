@@ -3,8 +3,15 @@ scopeName: source.qsharp
 fileTypes: [qs]
 patterns:
 - include: '#comments'
+- include: '#attributes'
 - include: '#namespace-declaration'
+- include: '#import-export-directive'
+- include: '#new-expression'
+- include: '#struct-declaration'
+- include: '#member-access'
+- include: '#tuple-binding'
 - include: '#keywords'
+- include: '#library-invocation'
 - include: '#library'
 - include: '#operations'
 - include: '#types'
@@ -19,6 +26,9 @@ patterns:
 - include: '#local-assignment'
 - include: '#quantum-declaration'
 - include: '#if-statement'
+- include: '#parenthesized-expression'
+- include: '#expression-operators'
+- include: '#identifier'
 
 repository:
   literals:
@@ -52,38 +62,93 @@ repository:
   keywords:
     patterns:
       - name: keyword.control.qsharp
-        match: \b(using|borrowing|elif|else|repeat|until|fixup|for|in|while|return|fail|within|apply)\b
+        match: \b(elif|else|repeat|until|fixup|for|in|while|return|fail|within|apply)\b
+      - comment: legacy allocation keywords (QDK <1.0)
+        name: keyword.other.qsharp
+        match: \b(using|borrowing)\b
       - name: keyword.other.qsharp
-        match: \b(new|w\/)\b
-      - comment: C# reserved words which can't be used in Q#
-        name: invalid.illegal.qsharp
-        match: |-
-          \b(abstract|base|bool|break|byte|case|catch|char|checked|class|const|continue|decimal|default|delegate|do|double)\b
-          \b(enum|event|explicit|extern|finally|fixed|float|foreach|goto|implicit|int|interface|lock|long)\b
-          \b(null|object|operator|out|override|params|private|protected|public|readonly|ref|sbyte|sealed|short|sizeof|stackalloc)\b
-          \b(static|string|struct|switch|this|throw|try|typeof|unit|ulong|unchecked|unsafe|ushort|virtual|void|volatile)\b
+        match: \b(new)\b
 
   operations:
     patterns:
       - name: keyword.other.qsharp
-        match: \b(as|internal|body|(a|A)djoint|(c|C)ontrolled|self|auto|distribute|invert|intrinsic)\b
+        match: \b(as|internal|body|(a|A)djoint|(c|C)ontrolled|self|auto|distribute|invert|intrinsic|is)\b
 
   types:
     patterns:
+      - include: '#type-parameter'
       - name: storage.type.qsharp
-        match: \b(Int|BigInt|Double|Bool|Qubit|Pauli|Result|Range|String|Unit|Ctl|Adj|is)\b
+        match: \b(Int|BigInt|Double|Bool|Qubit|Pauli|Result|Range|String|Unit|Ctl|Adj)\b
       - include: '#type-array-suffix'
 
+  type-parameter:
+    name: entity.name.type.type-parameter.qsharp
+    match: "'[_[:alpha:]][_[:alnum:]]*"
+
+  # Intrinsic quantum operations from the Std library (gates, measurement, reset).
+  # NOTE: keep this alternation in sync with #library-invocation below.
   library:
     patterns:
       - name: support.function.quantum.qsharp
-        match: \b(I|X|Y|Z|H|HY|S|T|SWAP|CNOT|CCNOT|MultiX|R|RFrac|Rx|Ry|Rz|R1|R1Frac|Exp|ExpFrac|Measure|M|MultiM)\b
+        match: \b(CCNOT|CNOT|CX|CY|CZ|SWAP|SX|H|S|T|I|X|Y|Z|Rxx|Ryy|Rzz|Rx|Ry|Rz|R1Frac|R1|RFrac|R|ExpFrac|Exp|MResetEachZ|MResetX|MResetY|MResetZ|MeasureEachZ|MeasureAllZ|Measure|M|ResetAll|Reset)\b
+
+  # A call to a known intrinsic:  H(q)   M(qubit)   Rx(theta, q)
+  # Keeps the gate scope on the name while still tokenizing the argument list.
+  library-invocation:
+    begin: |-
+      (?x)
+      \b(CCNOT|CNOT|CX|CY|CZ|SWAP|SX|H|S|T|I|X|Y|Z|Rxx|Ryy|Rzz|Rx|Ry|Rz|R1Frac|R1|RFrac|R|ExpFrac|Exp|MResetEachZ|MResetX|MResetY|MResetZ|MeasureEachZ|MeasureAllZ|Measure|M|ResetAll|Reset)\b\s*
+      (?=\()
+    beginCaptures:
+      '1':
+        name: support.function.quantum.qsharp
+    end: (?<=\))
+    patterns:
+    - include: '#argument-list'
+
+  parenthesized-expression:
+    begin: \(
+    beginCaptures:
+      '0':
+        name: punctuation.parenthesis.open.qsharp
+    end: \)
+    endCaptures:
+      '0':
+        name: punctuation.parenthesis.close.qsharp
+    patterns:
+    - include: '#expression'
+    - include: '#punctuation-comma'
 
   strings:
     patterns:
+      # interpolated string: $"...{expr}..."
+      - name: string.quoted.double.interpolated.qsharp
+        begin: \$"
+        beginCaptures:
+          '0':
+            name: punctuation.definition.string.begin.qsharp
+        end: '"'
+        endCaptures:
+          '0':
+            name: punctuation.definition.string.end.qsharp
+        patterns:
+          - name: constant.character.escape.qsharp
+            match: \\.
+          - name: meta.interpolation.qsharp
+            begin: \{
+            beginCaptures:
+              '0':
+                name: punctuation.section.interpolation.begin.qsharp
+            end: \}
+            endCaptures:
+              '0':
+                name: punctuation.section.interpolation.end.qsharp
+            patterns:
+              - include: '#expression'
+      # plain string
       - name: string.quoted.double.qsharp
-        begin: "(\\$|)\""
-        end: "\""
+        begin: '"'
+        end: '"'
         patterns:
           - name: constant.character.escape.qsharp
             match: \\.
@@ -108,7 +173,14 @@ repository:
           name: punctuation.curlybrace.close.qsharp
       patterns:
         - include: '#comments'
+        - include: '#attributes'
+        - include: '#import-export-directive'
+        - include: '#new-expression'
+        - include: '#struct-declaration'
+        - include: '#member-access'
+        - include: '#tuple-binding'
         - include: '#keywords'
+        - include: '#library-invocation'
         - include: '#library'
         - include: '#operations'
         - include: '#types'
@@ -123,14 +195,17 @@ repository:
         - include: '#array-assignment'
         - include: '#local-assignment'
         - include: '#quantum-declaration'
-        - include: '#expression-operators'
         - include: '#if-statement'
+        - include: '#parenthesized-expression'
+        - include: '#expression-operators'
+        - include: '#identifier'
 
-  callable-invocation: 
+  callable-invocation:
     begin: |-
       (?x)
-      (?:(\:\:)\s*)?                                      # preceding member access
-      ([_[:alpha:]][_[:alnum:]]*)\s*                      # callable name
+      (?:(\:\:|\.)\s*)?                                   # preceding member access (:: or .)
+      (?!(?:let|mutable|set|use|borrow|new|fixup|for|in|while|repeat|until|return|fail|within|apply|if|elif|else|not|and|or|namespace|import|export|open|operation|function|struct|newtype|internal|is)\b)
+      ([_[:alpha:]][_[:alnum:]]*)\s*                      # callable name (not a keyword)
       (?<type_args>\s*<([^<>]|\g<type_args>)+>\s*)?\s*    # type arguments
       (?=\()                                              # open parentheses of argument list
     beginCaptures:
@@ -176,8 +251,19 @@ repository:
     patterns:
       - match: ('[_[:alpha:]][_[:alnum:]]*)\b
         captures:
-          '1': 
+          '1':
             name: entity.name.type.type-parameter.qsharp
+      # class constraints:  'T : Eq + Add     Exp['T]
+      - name: punctuation.separator.colon.qsharp
+        match: ':'
+      - name: keyword.operator.qsharp
+        match: \+
+      - name: support.type.constraint.qsharp
+        match: \b(Eq|Add|Sub|Mul|Div|Mod|Signed|Ord|Show|Integral|Exp)\b
+      - name: punctuation.squarebracket.open.qsharp
+        match: \[
+      - name: punctuation.squarebracket.close.qsharp
+        match: \]
       - include: '#punctuation-comma'
 
   argument-list:
@@ -211,23 +297,13 @@ repository:
     match: ','
 
   identifier:
-    patterns: 
-       - match: ([_[:alpha:]][_[:alnum:]]*)(\!*)?
-         captures:
-          '1': 
-            name: variable.other.readwrite.qsharp
-          '2': 
-            name: keyword.operator.unwrap.qsharp
+    patterns:
+       - name: variable.other.readwrite.qsharp
+         match: \b[_[:alpha:]][_[:alnum:]]*\b
 
   argument:
     patterns:
-      - include: '#callable-invocation'
-      - include: '#strings'
-      - include: '#types'
-      - include: '#library'
-      - include: '#literals'
-      - include: '#expression-operators'
-      - include: '#identifier'
+      - include: '#expression'
 
   parameter:
     begin: ([_[:alpha:]][_[:alnum:]]*)\s*(:)
@@ -243,6 +319,8 @@ repository:
       - include: '#library'
       - include: '#expression-operators'
 
+  # Trailing brackets after a name or type: array-type suffix (Int[]),
+  # element access (arr[i]) and slicing (arr[1..3], arr[2...]).
   type-array-suffix:
     begin: \b\[
     beginCaptures:
@@ -254,7 +332,7 @@ repository:
         name: punctuation.squarebracket.close.qsharp
     patterns:
     - include: '#punctuation-comma'
-    - include: '#literals'
+    - include: '#expression'
 
   udt-declaration:
     begin: (?=\bnewtype\b)
@@ -269,7 +347,7 @@ repository:
           name: keyword.other.udt.qsharp
         '2':
           name: entity.name.type.udt.qsharp
-      end: (?=\())
+      end: (?=\s*=)
     - begin: (?:\s*=\s*)(\()
       beginCaptures:
         '1': 
@@ -290,6 +368,197 @@ repository:
       - include: '#punctuation-comma'
       - include: '#types'
       - include: '#library'
+
+  # struct Name { Field : Type, ... }  (QDK 1.x replacement for newtype)
+  struct-declaration:
+    begin: |-
+      (?x)
+      \b(struct)\b\s+
+      ([_[:alpha:]][_[:alnum:]]*)
+    beginCaptures:
+      '1':
+        name: keyword.other.struct.qsharp
+      '2':
+        name: entity.name.type.struct.qsharp
+    end: (?<=\})
+    patterns:
+    - include: '#comments'
+    - begin: \{
+      beginCaptures:
+        '0':
+          name: punctuation.curlybrace.open.qsharp
+      end: \}
+      endCaptures:
+        '0':
+          name: punctuation.curlybrace.close.qsharp
+      patterns:
+      - include: '#comments'
+      - include: '#struct-field'
+      - include: '#punctuation-comma'
+      - include: '#types'
+      - include: '#library'
+
+  struct-field:
+    begin: ([_[:alpha:]][_[:alnum:]]*)\s*(:)
+    beginCaptures:
+      '1':
+        name: variable.other.property.qsharp
+      '2':
+        name: punctuation.separator.colon.qsharp
+    end: (?=(,|\}))
+    patterns:
+    - include: '#type-parameter'
+    - include: '#types'
+    - include: '#library'
+
+  # new Name { Field = value, ...other, Field = value }
+  new-expression:
+    begin: |-
+      (?x)
+      \b(new)\b\s+
+      ([_[:alpha:]][_[:alnum:]]*)\s*
+      (?=\{)
+    beginCaptures:
+      '1':
+        name: keyword.other.new.qsharp
+      '2':
+        name: entity.name.type.struct.qsharp
+    end: (?<=\})
+    patterns:
+    - begin: \{
+      beginCaptures:
+        '0':
+          name: punctuation.curlybrace.open.qsharp
+      end: \}
+      endCaptures:
+        '0':
+          name: punctuation.curlybrace.close.qsharp
+      patterns:
+      - include: '#comments'
+      - include: '#spread-operator'
+      - include: '#field-initializer'
+      - include: '#punctuation-comma'
+      - include: '#expression'
+
+  field-initializer:
+    begin: ([_[:alpha:]][_[:alnum:]]*)\s*(=)(?![=>])
+    beginCaptures:
+      '1':
+        name: variable.other.property.qsharp
+      '2':
+        name: keyword.operator.assignment.qsharp
+    end: (?=(,|\}))
+    patterns:
+    - include: '#expression'
+
+  spread-operator:
+    name: keyword.operator.spread.qsharp
+    match: \.\.\.
+
+  # full statement grammar, reused for the top level and for nested blocks
+  # (e.g. the body of an if/elif/else expression)
+  statements:
+    patterns:
+    - include: '#comments'
+    - include: '#attributes'
+    - include: '#import-export-directive'
+    - include: '#open-directive'
+    - include: '#new-expression'
+    - include: '#struct-declaration'
+    - include: '#member-access'
+    - include: '#tuple-binding'
+    - include: '#keywords'
+    - include: '#library-invocation'
+    - include: '#library'
+    - include: '#operations'
+    - include: '#types'
+    - include: '#literals'
+    - include: '#strings'
+    - include: '#callable-invocation'
+    - include: '#callable-declaration'
+    - include: '#udt-declaration'
+    - include: '#array-creation-expression'
+    - include: '#local-declaration'
+    - include: '#array-assignment'
+    - include: '#local-assignment'
+    - include: '#quantum-declaration'
+    - include: '#if-statement'
+    - include: '#parenthesized-expression'
+    - include: '#expression-operators'
+    - include: '#identifier'
+
+  # general-purpose expression context, reused wherever a value can appear
+  expression:
+    patterns:
+    - include: '#comments'
+    - include: '#if-statement'
+    - include: '#new-expression'
+    - include: '#strings'
+    - include: '#member-access'
+    - include: '#library-invocation'
+    - include: '#callable-invocation'
+    - include: '#library'
+    - include: '#types'
+    - include: '#literals'
+    - include: '#parenthesized-expression'
+    - include: '#array-creation-expression'
+    - include: '#expression-operators'
+    - include: '#identifier'
+
+  # member / item access:  point.X   (X is a property, not the X gate)
+  member-access:
+    match: |-
+      (?x)
+      (\.)\s*
+      ([_[:alpha:]][_[:alnum:]]*)\b
+      (?!\s*\()
+    captures:
+      '1':
+        name: punctuation.accessor.qsharp
+      '2':
+        name: variable.other.property.qsharp
+
+  # @EntryPoint()   @Config(Adaptive_RI)   @Test()   @Measurement()
+  attributes:
+    patterns:
+    - begin: (@)([_[:alpha:]][_[:alnum:]]*)\s*(?=\()
+      beginCaptures:
+        '1':
+          name: punctuation.definition.attribute.qsharp
+        '2':
+          name: entity.name.function.attribute.qsharp
+      end: (?<=\))
+      patterns:
+      - include: '#argument-list'
+    - match: (@)([_[:alpha:]][_[:alnum:]]*)
+      captures:
+        '1':
+          name: punctuation.definition.attribute.qsharp
+        '2':
+          name: entity.name.function.attribute.qsharp
+
+  # import Std.Diagnostics.*;   import A.B as C;   export Foo, Bar;
+  import-export-directive:
+    begin: \b(import|export)\b
+    beginCaptures:
+      '1':
+        name: keyword.other.import.qsharp
+    end: (?=;)|$
+    patterns:
+    - begin: \b(as)\b\s*
+      beginCaptures:
+        '1':
+          name: keyword.other.qsharp
+      end: (?=(,|;)|$)
+      patterns:
+      - name: entity.name.type.alias.qsharp
+        match: '[_[:alpha:]][_[:alnum:]]*'
+    - name: keyword.operator.wildcard.qsharp
+      match: \*
+    - name: entity.name.namespace.qsharp
+      match: '[_[:alpha:]][_[:alnum:]]*'
+    - include: '#punctuation-accessor'
+    - include: '#punctuation-comma'
 
   boolean-literal:
     patterns:
@@ -334,8 +603,19 @@ repository:
       - include: "#punctuation-accessor"
 
   numeric-literal:
-    name: constant.numeric.decimal.qsharp
-    match: (?<!\w)\.?\d(?:[0-9a-zA-Z_\.])*
+    patterns:
+    - name: constant.numeric.hexadecimal.qsharp
+      match: \b0[xX][0-9a-fA-F][0-9a-fA-F_]*[lL]?\b
+    - name: constant.numeric.binary.qsharp
+      match: \b0[bB][01][01_]*[lL]?\b
+    - name: constant.numeric.octal.qsharp
+      match: \b0[oO][0-7][0-7_]*[lL]?\b
+    - name: constant.numeric.decimal.qsharp
+      match: |-
+        (?x)
+        \b\d[\d_]* \. \d[\d_]* (?:[eE][+-]?\d+)?    # 1.0   3.14   1.0e-3
+        | \b\d[\d_]* [eE][+-]?\d+                    # 1e10
+        | \b\d[\d_]* [lL]?                           # 42   42L   1_000
 
   array-creation-expression:
     begin: (?<!\w)\[
@@ -349,9 +629,11 @@ repository:
     patterns:
     - begin: \b(size)\s*(?=\=)
       end: (?=\])
-      beginCaptures: 
-        '1': 
+      beginCaptures:
+        '1':
           name: keyword.other.size.qsharp
+      patterns:
+      - include: '#expression'
     - include: '#argument'
     - include: '#punctuation-comma'
 
@@ -368,6 +650,24 @@ repository:
     end: (?=;|\))
     patterns:
     - include: '#variable-initializer'
+
+  # tuple binding keywords immediately followed by a tuple pattern:
+  #   let (a, b) = pair;   mutable (x, _) = ...;   set (a, b) = ...;
+  #   use (a, b) = (Qubit(), Qubit());   borrow (a, b) = (...);
+  tuple-binding:
+    patterns:
+    - match: \b(let|mutable|set)\b(?=\s*\()
+      captures:
+        '1':
+          name: keyword.other.qsharp
+    - match: \b(use)\b(?=\s*\()
+      captures:
+        '1':
+          name: keyword.other.use.qsharp
+    - match: \b(borrow)\b(?=\s*\()
+      captures:
+        '1':
+          name: keyword.other.borrow.qsharp
 
   # note this captures both set foo w/= 0 <- 1 as well as set foo = foo w/ 0 <-1
   # this is good enough for now, but probably the latter should be moved out
@@ -417,29 +717,18 @@ repository:
       '3': { name: keyword.operator.assignment.qsharp }
     end: (?=[,\)\];}])
     patterns:
-    - include: '#expression-operators'
-    - include: '#callable-invocation'
-    - include: '#strings'
-    - include: '#types'
-    - include: '#library'
-    - include: '#literals'
-    - include: '#identifier'
-    - include: '#array-creation-expression'
+    - include: '#expression'
 
+  # Handles both if-statements and if-expressions, including chained
+  # `elif` / `else` blocks:  if c { ... } elif d { ... } else { ... }
   if-statement:
     begin: (?<!\.)\b(if)\b\s*(?=\S)
     beginCaptures:
       '1': { name: keyword.control.conditional.if.qsharp }
-    end: (?<=})|(?=;)
+    end: (?<=})(?!\s*\b(?:elif|else)\b)|(?=;)
     patterns:
-    - include: '#expression-operators'
-    - include: '#callable-invocation'
-    - include: '#strings'
-    - include: '#types'
-    - include: '#library'
-    - include: '#literals'
-    - include: '#identifier'
-    - include: '#array-creation-expression'
+    - name: keyword.control.conditional.qsharp
+      match: \b(elif|else)\b
     - begin: \{
       beginCaptures:
         '0':
@@ -448,13 +737,33 @@ repository:
       endCaptures:
         '0':
           name: punctuation.curlybrace.close.qsharp
+      patterns:
+        - include: '#statements'
+    - include: '#expression'
 
   expression-operators:
     patterns:
     - name: keyword.operator.logical.qsharp
       match: \b(not|and|or)\b
+    - name: keyword.operator.lambda.qsharp
+      match: (->|=>)
+    # compound assignment (must precede the bare arithmetic/bitwise operators)
+    - name: keyword.operator.assignment.compound.qsharp
+      match: (\+=|-=|\*=|/=|%=|\^=|&&&=|\|\|\|=|\^\^\^=|<<<=|>>>=|\bw/=)
+    - name: keyword.operator.copy-update.qsharp
+      match: (\bw/|<-)
+    - name: keyword.operator.assignment.qsharp
+      match: (?<![=<>!+\-*/%^&|~])=(?![=>])
+    - name: keyword.operator.range.qsharp
+      match: (\.\.\.|\.\.)
+    - name: keyword.operator.bitwise.qsharp
+      match: (&&&|\|\|\||\^\^\^|~~~|<<<|>>>)
     - name: keyword.operator.comparison.qsharp
-      match: ==|!=
+      match: (==|!=|<=|>=|<|>)
+    - name: keyword.operator.arithmetic.qsharp
+      match: (\+|\-|\*|/|%|\^)
+    - name: keyword.operator.ternary.qsharp
+      match: (\?|\|)
 
   quantum-declaration:
     begin: |-
@@ -476,9 +785,4 @@ repository:
       '1': { name: keyword.operator.assignment.qsharp }
     end: (?=[,\)\];}])
     patterns:
-    - include: '#expression-operators'
-    - include: '#callable-invocation'
-    - include: '#types'
-    - include: '#literals'
-    - include: '#identifier'
-    - include: '#array-creation-expression'
+    - include: '#expression'
