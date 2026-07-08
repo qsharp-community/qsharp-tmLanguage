@@ -118,4 +118,20 @@ describe("Expression Operators", () => {
             createToken("c", "variable.other.readwrite.qsharp"),
         ]);
     });
+
+    let tightNotEqual = `let b = a!=c;`;
+    it(tightNotEqual, async () => {
+        const tokens = await tokenize(tightNotEqual);
+        tokens.should.deep.equal([
+            createToken("let", "keyword.other.let.qsharp"),
+            createToken(" ", "source.qsharp"),
+            createToken("b", "entity.name.variable.local.qsharp"),
+            createToken(" ", "source.qsharp"),
+            createToken("=", "keyword.operator.assignment.qsharp"),
+            createToken(" ", "source.qsharp"),
+            createToken("a", "variable.other.readwrite.qsharp"),
+            createToken("!=", "keyword.operator.comparison.qsharp"),
+            createToken("c", "variable.other.readwrite.qsharp"),
+        ]);
+    });
 });

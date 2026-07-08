@@ -203,7 +203,7 @@ repository:
   callable-invocation:
     begin: |-
       (?x)
-      (?:(\:\:)\s*)?                                      # preceding member access
+      (?:(\:\:|\.)\s*)?                                   # preceding member access (:: or .)
       (?!(?:let|mutable|set|use|borrow|new|fixup|for|in|while|repeat|until|return|fail|within|apply|if|elif|else|not|and|or|namespace|import|export|open|operation|function|struct|newtype|internal|is)\b)
       ([_[:alpha:]][_[:alnum:]]*)\s*                      # callable name (not a keyword)
       (?<type_args>\s*<([^<>]|\g<type_args>)+>\s*)?\s*    # type arguments
@@ -297,13 +297,9 @@ repository:
     match: ','
 
   identifier:
-    patterns: 
-       - match: ([_[:alpha:]][_[:alnum:]]*)(\!*)?
-         captures:
-          '1': 
-            name: variable.other.readwrite.qsharp
-          '2': 
-            name: keyword.operator.unwrap.qsharp
+    patterns:
+       - name: variable.other.readwrite.qsharp
+         match: \b[_[:alpha:]][_[:alnum:]]*\b
 
   argument:
     patterns:
@@ -655,12 +651,23 @@ repository:
     patterns:
     - include: '#variable-initializer'
 
-  # tuple destructuring:  let (a, b) = pair;   mutable (x, _) = ...;   set (a, b) = ...;
+  # tuple binding keywords immediately followed by a tuple pattern:
+  #   let (a, b) = pair;   mutable (x, _) = ...;   set (a, b) = ...;
+  #   use (a, b) = (Qubit(), Qubit());   borrow (a, b) = (...);
   tuple-binding:
-    match: \b(let|mutable|set)\b(?=\s*\()
-    captures:
-      '1':
-        name: keyword.other.qsharp
+    patterns:
+    - match: \b(let|mutable|set)\b(?=\s*\()
+      captures:
+        '1':
+          name: keyword.other.qsharp
+    - match: \b(use)\b(?=\s*\()
+      captures:
+        '1':
+          name: keyword.other.use.qsharp
+    - match: \b(borrow)\b(?=\s*\()
+      captures:
+        '1':
+          name: keyword.other.borrow.qsharp
 
   # note this captures both set foo w/= 0 <- 1 as well as set foo = foo w/ 0 <-1
   # this is good enough for now, but probably the latter should be moved out

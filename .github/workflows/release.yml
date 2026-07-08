@@ -32,4 +32,5 @@ jobs:
       - name: Attach grammar to the release
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release upload "${{ github.event.release.tag_name }}" grammars/qsharp.tmLanguage.json --clobber
+          TAG: ${{ github.event.release.tag_name }}
+        run: gh release upload "$TAG" grammars/qsharp.tmLanguage.json --clobber

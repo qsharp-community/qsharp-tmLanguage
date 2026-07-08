@@ -59,10 +59,37 @@ describe("Quantum: Allocation", () => {
             createToken(" ", "source.qsharp"),
             createToken("=", "keyword.operator.assignment.qsharp"),
             createToken(" ", "source.qsharp"),
-            createToken("Qubit", "storage.type.qsharp"), 
+            createToken("Qubit", "storage.type.qsharp"),
             createToken("[", "punctuation.squarebracket.open.qsharp"),
             createToken("2", "constant.numeric.decimal.qsharp"),
             createToken("]", "punctuation.squarebracket.close.qsharp"),
+        ]);
+    });
+
+    it("Use with tuple allocation", async () => {
+        const tokens = await tokenize(`use (q1, q2) = (Qubit(), Qubit());`);
+        tokens.should.deep.equal([
+            createToken("use", "keyword.other.use.qsharp"),
+            createToken(" ", "source.qsharp"),
+            createToken("(", "punctuation.parenthesis.open.qsharp"),
+            createToken("q1", "variable.other.readwrite.qsharp"),
+            createToken(",", "punctuation.separator.comma.qsharp"),
+            createToken(" ", "source.qsharp"),
+            createToken("q2", "variable.other.readwrite.qsharp"),
+            createToken(")", "punctuation.parenthesis.close.qsharp"),
+            createToken(" ", "source.qsharp"),
+            createToken("=", "keyword.operator.assignment.qsharp"),
+            createToken(" ", "source.qsharp"),
+            createToken("(", "punctuation.parenthesis.open.qsharp"),
+            createToken("Qubit", "entity.name.function.qsharp"),
+            createToken("(", "punctuation.parenthesis.open.qsharp"),
+            createToken(")", "punctuation.parenthesis.close.qsharp"),
+            createToken(",", "punctuation.separator.comma.qsharp"),
+            createToken(" ", "source.qsharp"),
+            createToken("Qubit", "entity.name.function.qsharp"),
+            createToken("(", "punctuation.parenthesis.open.qsharp"),
+            createToken(")", "punctuation.parenthesis.close.qsharp"),
+            createToken(")", "punctuation.parenthesis.close.qsharp"),
         ]);
     });
 });

@@ -587,7 +587,7 @@
       <dict>
         <key>begin</key>
         <string>(?x)
-(?:(\:\:)\s*)?                                      # preceding member access
+(?:(\:\:|\.)\s*)?                                   # preceding member access (:: or .)
 (?!(?:let|mutable|set|use|borrow|new|fixup|for|in|while|repeat|until|return|fail|within|apply|if|elif|else|not|and|or|namespace|import|export|open|operation|function|struct|newtype|internal|is)\b)
 ([_[:alpha:]][_[:alnum:]]*)\s*                      # callable name (not a keyword)
 (?&lt;type_args&gt;\s*&lt;([^&lt;&gt;]|\g&lt;type_args&gt;)+&gt;\s*)?\s*    # type arguments
@@ -818,21 +818,10 @@
         <key>patterns</key>
         <array>
           <dict>
+            <key>name</key>
+            <string>variable.other.readwrite.qsharp</string>
             <key>match</key>
-            <string>([_[:alpha:]][_[:alnum:]]*)(\!*)?</string>
-            <key>captures</key>
-            <dict>
-              <key>1</key>
-              <dict>
-                <key>name</key>
-                <string>variable.other.readwrite.qsharp</string>
-              </dict>
-              <key>2</key>
-              <dict>
-                <key>name</key>
-                <string>keyword.operator.unwrap.qsharp</string>
-              </dict>
-            </dict>
+            <string>\b[_[:alpha:]][_[:alnum:]]*\b</string>
           </dict>
         </array>
       </dict>
@@ -1769,16 +1758,45 @@
       </dict>
       <key>tuple-binding</key>
       <dict>
-        <key>match</key>
-        <string>\b(let|mutable|set)\b(?=\s*\()</string>
-        <key>captures</key>
-        <dict>
-          <key>1</key>
+        <key>patterns</key>
+        <array>
           <dict>
-            <key>name</key>
-            <string>keyword.other.qsharp</string>
+            <key>match</key>
+            <string>\b(let|mutable|set)\b(?=\s*\()</string>
+            <key>captures</key>
+            <dict>
+              <key>1</key>
+              <dict>
+                <key>name</key>
+                <string>keyword.other.qsharp</string>
+              </dict>
+            </dict>
           </dict>
-        </dict>
+          <dict>
+            <key>match</key>
+            <string>\b(use)\b(?=\s*\()</string>
+            <key>captures</key>
+            <dict>
+              <key>1</key>
+              <dict>
+                <key>name</key>
+                <string>keyword.other.use.qsharp</string>
+              </dict>
+            </dict>
+          </dict>
+          <dict>
+            <key>match</key>
+            <string>\b(borrow)\b(?=\s*\()</string>
+            <key>captures</key>
+            <dict>
+              <key>1</key>
+              <dict>
+                <key>name</key>
+                <string>keyword.other.borrow.qsharp</string>
+              </dict>
+            </dict>
+          </dict>
+        </array>
       </dict>
       <key>array-assignment</key>
       <dict>

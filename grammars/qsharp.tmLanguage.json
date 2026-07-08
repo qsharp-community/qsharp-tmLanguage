@@ -398,7 +398,7 @@
 			]
 		},
 		"callable-invocation": {
-			"begin": "(?x)\n(?:(\\:\\:)\\s*)?                                      # preceding member access\n(?!(?:let|mutable|set|use|borrow|new|fixup|for|in|while|repeat|until|return|fail|within|apply|if|elif|else|not|and|or|namespace|import|export|open|operation|function|struct|newtype|internal|is)\\b)\n([_[:alpha:]][_[:alnum:]]*)\\s*                      # callable name (not a keyword)\n(?<type_args>\\s*<([^<>]|\\g<type_args>)+>\\s*)?\\s*    # type arguments\n(?=\\()                                              # open parentheses of argument list",
+			"begin": "(?x)\n(?:(\\:\\:|\\.)\\s*)?                                   # preceding member access (:: or .)\n(?!(?:let|mutable|set|use|borrow|new|fixup|for|in|while|repeat|until|return|fail|within|apply|if|elif|else|not|and|or|namespace|import|export|open|operation|function|struct|newtype|internal|is)\\b)\n([_[:alpha:]][_[:alnum:]]*)\\s*                      # callable name (not a keyword)\n(?<type_args>\\s*<([^<>]|\\g<type_args>)+>\\s*)?\\s*    # type arguments\n(?=\\()                                              # open parentheses of argument list",
 			"beginCaptures": {
 				"1": {
 					"name": "punctuation.accessor.qsharp"
@@ -543,15 +543,8 @@
 		"identifier": {
 			"patterns": [
 				{
-					"match": "([_[:alpha:]][_[:alnum:]]*)(\\!*)?",
-					"captures": {
-						"1": {
-							"name": "variable.other.readwrite.qsharp"
-						},
-						"2": {
-							"name": "keyword.operator.unwrap.qsharp"
-						}
-					}
+					"name": "variable.other.readwrite.qsharp",
+					"match": "\\b[_[:alpha:]][_[:alnum:]]*\\b"
 				}
 			]
 		},
@@ -1172,12 +1165,32 @@
 			]
 		},
 		"tuple-binding": {
-			"match": "\\b(let|mutable|set)\\b(?=\\s*\\()",
-			"captures": {
-				"1": {
-					"name": "keyword.other.qsharp"
+			"patterns": [
+				{
+					"match": "\\b(let|mutable|set)\\b(?=\\s*\\()",
+					"captures": {
+						"1": {
+							"name": "keyword.other.qsharp"
+						}
+					}
+				},
+				{
+					"match": "\\b(use)\\b(?=\\s*\\()",
+					"captures": {
+						"1": {
+							"name": "keyword.other.use.qsharp"
+						}
+					}
+				},
+				{
+					"match": "\\b(borrow)\\b(?=\\s*\\()",
+					"captures": {
+						"1": {
+							"name": "keyword.other.borrow.qsharp"
+						}
+					}
 				}
-			}
+			]
 		},
 		"array-assignment": {
 			"begin": "(?x)\n(?:\\b(set)\\b\\s*)\n([_[:alpha:]][_[:alnum:]]*)\\b\\s*\n(?:(=)\\s*([_[:alpha:]][_[:alnum:]]*)\\b\\s*(w\\/)\\s*|\\b(w\\/=)\\s*)?\n(\\d+)\\s*\n(<-)\\s*",
