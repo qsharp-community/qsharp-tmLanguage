@@ -31,6 +31,17 @@ function build() {
     );
 
     console.log("Built grammars/qsharp.tmLanguage and grammars/qsharp.tmLanguage.json");
+
+    // Keep a copy inside the test extension (gitignored) so its manifest can
+    // reference a grammar within its own folder — VS Code warns otherwise.
+    const testExtDir = path.join(__dirname, "test-extension");
+    if (fs.existsSync(testExtDir)) {
+        fs.writeFileSync(
+            path.join(testExtDir, "qsharp.tmLanguage.json"),
+            JSON.stringify(grammar, null, "\t") + "\n"
+        );
+        console.log("Refreshed test-extension/qsharp.tmLanguage.json");
+    }
 }
 
 build();

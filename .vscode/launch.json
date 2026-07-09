@@ -1,0 +1,15 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Test grammar (Extension Development Host)",
+      "type": "extensionHost",
+      "request": "launch",
+      "args": [
+        "--disable-extension=quantum.qsharp-lang-vscode",
+        "--extensionDevelopmentPath=${workspaceFolder}/test-extension",
+        "${workspaceFolder}/test-extension/sample.qs"
+      ]
+    }
+  ]
+}
