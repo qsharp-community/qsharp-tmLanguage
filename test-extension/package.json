@@ -1,0 +1,28 @@
+{
+  "name": "qsharp-tmlanguage-test-extension",
+  "displayName": "Q# TextMate grammar (dev)",
+  "description": "Loads the locally-built Q# grammar for manual testing in an Extension Development Host.",
+  "publisher": "local",
+  "version": "0.0.0",
+  "private": true,
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "contributes": {
+    "languages": [
+      {
+        "id": "qsharp",
+        "aliases": ["Q#", "qsharp"],
+        "extensions": [".qs"],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "qsharp",
+        "scopeName": "source.qsharp",
+        "path": "./qsharp.tmLanguage.json"
+      }
+    ]
+  }
+}

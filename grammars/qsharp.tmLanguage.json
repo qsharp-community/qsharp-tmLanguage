@@ -477,7 +477,7 @@
 				},
 				{
 					"name": "support.type.constraint.qsharp",
-					"match": "\\b(Eq|Add|Sub|Mul|Div|Mod|Signed|Ord|Show|Integral|Exp)\\b"
+					"match": "\\b(Eq|Add|Sub|Mul|Div|Mod|Signed|Ord|Show|Integral|Iterable|Exp)\\b"
 				},
 				{
 					"name": "punctuation.squarebracket.open.qsharp",

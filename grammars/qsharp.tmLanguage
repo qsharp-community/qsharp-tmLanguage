@@ -718,7 +718,7 @@
             <key>name</key>
             <string>support.type.constraint.qsharp</string>
             <key>match</key>
-            <string>\b(Eq|Add|Sub|Mul|Div|Mod|Signed|Ord|Show|Integral|Exp)\b</string>
+            <string>\b(Eq|Add|Sub|Mul|Div|Mod|Signed|Ord|Show|Integral|Iterable|Exp)\b</string>
           </dict>
           <dict>
             <key>name</key>
