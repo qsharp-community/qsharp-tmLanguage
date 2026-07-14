@@ -7,13 +7,13 @@ describe("Local declarations", () => {
     it("Tuple destructuring", async () => {
         const tokens = await tokenize(`let (a, b) = pair;`);
         tokens.should.deep.equal([
-            createToken("let", "keyword.other.qsharp"),
+            createToken("let", "keyword.other.let.qsharp"),
             createToken(" ", "source.qsharp"),
             createToken("(", "punctuation.parenthesis.open.qsharp"),
-            createToken("a", "variable.other.readwrite.qsharp"),
+            createToken("a", "entity.name.variable.local.qsharp"),
             createToken(",", "punctuation.separator.comma.qsharp"),
             createToken(" ", "source.qsharp"),
-            createToken("b", "variable.other.readwrite.qsharp"),
+            createToken("b", "entity.name.variable.local.qsharp"),
             createToken(")", "punctuation.parenthesis.close.qsharp"),
             createToken(" ", "source.qsharp"),
             createToken("=", "keyword.operator.assignment.qsharp"),
