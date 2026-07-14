@@ -1,11 +1,7 @@
 import { should } from 'chai';
 import { tokenize, createToken, Token } from './utils/tokenize';
 
-// Array element access already emits distinct scopes for the array name
-// (variable.other.readwrite) and the surrounding brackets
-// (punctuation.squarebracket.*). Whether those render in different colors is a
-// theme concern; the grammar's job is only to scope them distinctly, which
-// these tests lock in.
+// regression test for array element acccess (ensure proper tokenization of the square brackets and the index expression)
 describe("Array element access", () => {
     before(() => { should(); });
 
