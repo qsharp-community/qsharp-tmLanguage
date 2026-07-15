@@ -28,6 +28,7 @@ patterns:
 - include: '#if-statement'
 - include: '#parenthesized-expression'
 - include: '#expression-operators'
+- include: '#declaration-keywords'
 - include: '#identifier'
 
 repository:
@@ -68,6 +69,25 @@ repository:
         match: \b(using|borrowing)\b
       - name: keyword.other.qsharp
         match: \b(new)\b
+
+  # Low-priority fallback so declaration/callable keywords are colored the
+  # moment they are typed, before the rest of the construct (name, parens,
+  # `=`, `;`) exists to satisfy the more specific rules. Must be included
+  # AFTER those specific rules but BEFORE #identifier.
+  declaration-keywords:
+    patterns:
+      - name: keyword.other.callable.qsharp
+        match: \b(operation|function)\b
+      - name: keyword.other.let.qsharp
+        match: \b(let)\b
+      - name: keyword.other.mutable.qsharp
+        match: \b(mutable)\b
+      - name: keyword.other.set.qsharp
+        match: \b(set)\b
+      - name: keyword.other.use.qsharp
+        match: \b(use)\b
+      - name: keyword.other.borrow.qsharp
+        match: \b(borrow)\b
 
   operations:
     patterns:
@@ -198,6 +218,7 @@ repository:
         - include: '#if-statement'
         - include: '#parenthesized-expression'
         - include: '#expression-operators'
+        - include: '#declaration-keywords'
         - include: '#identifier'
 
   callable-invocation:
@@ -485,6 +506,7 @@ repository:
     - include: '#if-statement'
     - include: '#parenthesized-expression'
     - include: '#expression-operators'
+    - include: '#declaration-keywords'
     - include: '#identifier'
 
   # general-purpose expression context, reused wherever a value can appear
@@ -654,31 +676,56 @@ repository:
   # tuple binding keywords immediately followed by a tuple pattern:
   #   let (a, b) = pair;   mutable (x, _) = ...;   set (a, b) = ...;
   #   use (a, b) = (Qubit(), Qubit());   borrow (a, b) = (...);
+  # The bound identifiers are scoped as local variables so they match the
+  # coloring of a simple `let x = ...;` declaration.
   tuple-binding:
+    begin: |-
+      (?x)
+      \b(?:(let)|(mutable)|(set)|(use)|(borrow))\b\s*
+      (?=\()
+    beginCaptures:
+      '1': { name: keyword.other.let.qsharp }
+      '2': { name: keyword.other.mutable.qsharp }
+      '3': { name: keyword.other.set.qsharp }
+      '4': { name: keyword.other.use.qsharp }
+      '5': { name: keyword.other.borrow.qsharp }
+    end: (?=;|\bin\b)
     patterns:
-    - match: \b(let|mutable|set)\b(?=\s*\()
-      captures:
-        '1':
-          name: keyword.other.qsharp
-    - match: \b(use)\b(?=\s*\()
-      captures:
-        '1':
-          name: keyword.other.use.qsharp
-    - match: \b(borrow)\b(?=\s*\()
-      captures:
-        '1':
-          name: keyword.other.borrow.qsharp
+    - include: '#tuple-pattern'
+    - include: '#variable-initializer'
+    - include: '#expression'
 
-  # note this captures both set foo w/= 0 <- 1 as well as set foo = foo w/ 0 <-1
-  # this is good enough for now, but probably the latter should be moved out
+  # the parenthesized identifier list of a tuple binding: (a, b), (x, _),
+  # and nested forms like (a, (b, c)). Identifiers become local variables.
+  tuple-pattern:
+    begin: \(
+    beginCaptures:
+      '0':
+        name: punctuation.parenthesis.open.qsharp
+    end: \)
+    endCaptures:
+      '0':
+        name: punctuation.parenthesis.close.qsharp
+    patterns:
+    - include: '#tuple-pattern'
+    - name: entity.name.variable.local.qsharp
+      match: \b[_[:alpha:]][_[:alnum:]]*\b
+    - include: '#punctuation-comma'
+
+  # copy-and-update assignment. Two spellings, both requiring the copy-update
+  # operator so that plain reassignment (set foo = ...) is left to
+  # #local-assignment:
+  #   set foo w/= <index> <- <value>;
+  #   set foo = foo w/ <index> <- <value>;
+  # The index and value are full expressions, so variable indices such as
+  #   set ary w/= x <- 10;
+  # are highlighted correctly rather than mis-scoping `set` as an identifier.
   array-assignment:
     begin: |-
       (?x)
-      (?:\b(set)\b\s*)
+      \b(set)\b\s*
       ([_[:alpha:]][_[:alnum:]]*)\b\s*
-      (?:(=)\s*([_[:alpha:]][_[:alnum:]]*)\b\s*(w\/)\s*|\b(w\/=)\s*)?
-      (\d+)\s*
-      (<-)\s*
+      (?:(=)\s*([_[:alpha:]][_[:alnum:]]*)\b\s*(w\/)|(w\/=))
     beginCaptures:
       '1': { name: keyword.other.set.qsharp }
       '2': { name: entity.name.variable.local.qsharp }
@@ -686,15 +733,11 @@ repository:
       '4': { name: entity.name.variable.local.qsharp }
       '5': { name: keyword.operator.assignment.qsharp }
       '6': { name: keyword.operator.assignment.qsharp }
-      '7': { name: constant.numeric.decimal.qsharp }
-      '8': { name: keyword.operator.assignment.qsharp }
     end: (?=;|\))
     patterns:
-      - include: '#callable-invocation'
-      - include: '#strings'
-      - include: '#types'
-      - include: '#literals'
-      - include: '#identifier'
+      - name: keyword.operator.assignment.qsharp
+        match: <-
+      - include: '#expression'
 
   local-assignment:
     begin: |-

@@ -118,6 +118,10 @@
       </dict>
       <dict>
         <key>include</key>
+        <string>#declaration-keywords</string>
+      </dict>
+      <dict>
+        <key>include</key>
         <string>#identifier</string>
       </dict>
     </array>
@@ -223,6 +227,48 @@
             <string>keyword.other.qsharp</string>
             <key>match</key>
             <string>\b(new)\b</string>
+          </dict>
+        </array>
+      </dict>
+      <key>declaration-keywords</key>
+      <dict>
+        <key>patterns</key>
+        <array>
+          <dict>
+            <key>name</key>
+            <string>keyword.other.callable.qsharp</string>
+            <key>match</key>
+            <string>\b(operation|function)\b</string>
+          </dict>
+          <dict>
+            <key>name</key>
+            <string>keyword.other.let.qsharp</string>
+            <key>match</key>
+            <string>\b(let)\b</string>
+          </dict>
+          <dict>
+            <key>name</key>
+            <string>keyword.other.mutable.qsharp</string>
+            <key>match</key>
+            <string>\b(mutable)\b</string>
+          </dict>
+          <dict>
+            <key>name</key>
+            <string>keyword.other.set.qsharp</string>
+            <key>match</key>
+            <string>\b(set)\b</string>
+          </dict>
+          <dict>
+            <key>name</key>
+            <string>keyword.other.use.qsharp</string>
+            <key>match</key>
+            <string>\b(use)\b</string>
+          </dict>
+          <dict>
+            <key>name</key>
+            <string>keyword.other.borrow.qsharp</string>
+            <key>match</key>
+            <string>\b(borrow)\b</string>
           </dict>
         </array>
       </dict>
@@ -574,6 +620,10 @@
               <dict>
                 <key>include</key>
                 <string>#expression-operators</string>
+              </dict>
+              <dict>
+                <key>include</key>
+                <string>#declaration-keywords</string>
               </dict>
               <dict>
                 <key>include</key>
@@ -1329,6 +1379,10 @@
           </dict>
           <dict>
             <key>include</key>
+            <string>#declaration-keywords</string>
+          </dict>
+          <dict>
+            <key>include</key>
             <string>#identifier</string>
           </dict>
         </array>
@@ -1758,43 +1812,93 @@
       </dict>
       <key>tuple-binding</key>
       <dict>
+        <key>begin</key>
+        <string>(?x)
+\b(?:(let)|(mutable)|(set)|(use)|(borrow))\b\s*
+(?=\()</string>
+        <key>beginCaptures</key>
+        <dict>
+          <key>1</key>
+          <dict>
+            <key>name</key>
+            <string>keyword.other.let.qsharp</string>
+          </dict>
+          <key>2</key>
+          <dict>
+            <key>name</key>
+            <string>keyword.other.mutable.qsharp</string>
+          </dict>
+          <key>3</key>
+          <dict>
+            <key>name</key>
+            <string>keyword.other.set.qsharp</string>
+          </dict>
+          <key>4</key>
+          <dict>
+            <key>name</key>
+            <string>keyword.other.use.qsharp</string>
+          </dict>
+          <key>5</key>
+          <dict>
+            <key>name</key>
+            <string>keyword.other.borrow.qsharp</string>
+          </dict>
+        </dict>
+        <key>end</key>
+        <string>(?=;|\bin\b)</string>
         <key>patterns</key>
         <array>
           <dict>
-            <key>match</key>
-            <string>\b(let|mutable|set)\b(?=\s*\()</string>
-            <key>captures</key>
-            <dict>
-              <key>1</key>
-              <dict>
-                <key>name</key>
-                <string>keyword.other.qsharp</string>
-              </dict>
-            </dict>
+            <key>include</key>
+            <string>#tuple-pattern</string>
           </dict>
           <dict>
-            <key>match</key>
-            <string>\b(use)\b(?=\s*\()</string>
-            <key>captures</key>
-            <dict>
-              <key>1</key>
-              <dict>
-                <key>name</key>
-                <string>keyword.other.use.qsharp</string>
-              </dict>
-            </dict>
+            <key>include</key>
+            <string>#variable-initializer</string>
           </dict>
           <dict>
+            <key>include</key>
+            <string>#expression</string>
+          </dict>
+        </array>
+      </dict>
+      <key>tuple-pattern</key>
+      <dict>
+        <key>begin</key>
+        <string>\(</string>
+        <key>beginCaptures</key>
+        <dict>
+          <key>0</key>
+          <dict>
+            <key>name</key>
+            <string>punctuation.parenthesis.open.qsharp</string>
+          </dict>
+        </dict>
+        <key>end</key>
+        <string>\)</string>
+        <key>endCaptures</key>
+        <dict>
+          <key>0</key>
+          <dict>
+            <key>name</key>
+            <string>punctuation.parenthesis.close.qsharp</string>
+          </dict>
+        </dict>
+        <key>patterns</key>
+        <array>
+          <dict>
+            <key>include</key>
+            <string>#tuple-pattern</string>
+          </dict>
+          <dict>
+            <key>name</key>
+            <string>entity.name.variable.local.qsharp</string>
             <key>match</key>
-            <string>\b(borrow)\b(?=\s*\()</string>
-            <key>captures</key>
-            <dict>
-              <key>1</key>
-              <dict>
-                <key>name</key>
-                <string>keyword.other.borrow.qsharp</string>
-              </dict>
-            </dict>
+            <string>\b[_[:alpha:]][_[:alnum:]]*\b</string>
+          </dict>
+          <dict>
+            <key>include</key>
+            <string>#punctuation-comma</string>
           </dict>
         </array>
       </dict>
@@ -1802,11 +1906,9 @@
       <dict>
         <key>begin</key>
         <string>(?x)
-(?:\b(set)\b\s*)
+\b(set)\b\s*
 ([_[:alpha:]][_[:alnum:]]*)\b\s*
-(?:(=)\s*([_[:alpha:]][_[:alnum:]]*)\b\s*(w\/)\s*|\b(w\/=)\s*)?
-(\d+)\s*
-(&lt;-)\s*</string>
+(?:(=)\s*([_[:alpha:]][_[:alnum:]]*)\b\s*(w\/)|(w\/=))</string>
         <key>beginCaptures</key>
         <dict>
           <key>1</key>
@@ -1839,40 +1941,20 @@
             <key>name</key>
             <string>keyword.operator.assignment.qsharp</string>
           </dict>
-          <key>7</key>
-          <dict>
-            <key>name</key>
-            <string>constant.numeric.decimal.qsharp</string>
-          </dict>
-          <key>8</key>
-          <dict>
-            <key>name</key>
-            <string>keyword.operator.assignment.qsharp</string>
-          </dict>
         </dict>
         <key>end</key>
         <string>(?=;|\))</string>
         <key>patterns</key>
         <array>
           <dict>
-            <key>include</key>
-            <string>#callable-invocation</string>
+            <key>name</key>
+            <string>keyword.operator.assignment.qsharp</string>
+            <key>match</key>
+            <string>&lt;-</string>
           </dict>
           <dict>
             <key>include</key>
-            <string>#strings</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#types</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#literals</string>
-          </dict>
-          <dict>
-            <key>include</key>
-            <string>#identifier</string>
+            <string>#expression</string>
           </dict>
         </array>
       </dict>
