@@ -10,6 +10,7 @@ const fs = require("fs");
 const path = require("path");
 const jsYaml = require("js-yaml");
 const plist = require("plist");
+const prettier = require("prettier");
 
 const srcFile = path.join(__dirname, "src", "qsharp.tmLanguage.yml");
 const grammarsDir = path.join(__dirname, "grammars");
@@ -18,12 +19,16 @@ const grammarsDir = path.join(__dirname, "grammars");
 // first key)
 const JSON_SCHEMA = "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json";
 
-function build() {
+async function build() {
     const text = fs.readFileSync(srcFile, "utf8");
     const grammar = jsYaml.load(text);
 
     const jsonGrammar = { $schema: JSON_SCHEMA, ...grammar };
-    const jsonText = JSON.stringify(jsonGrammar, null, "\t") + "\n";
+    
+    // format with Prettier's defaults
+    const jsonText = await prettier.format(JSON.stringify(jsonGrammar), {
+        parser: "json",
+    });
 
     fs.mkdirSync(grammarsDir, { recursive: true });
 
@@ -51,4 +56,7 @@ function build() {
     }
 }
 
-build();
+build().catch((err) => {
+    console.error(err);
+    process.exit(1);
+});
