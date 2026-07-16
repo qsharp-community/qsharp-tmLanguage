@@ -72,3 +72,26 @@ jobs:
         env:
           QDK_SAMPLES: ${{ github.workspace }}/qdk/samples
         run: npm test
+
+  # Verifies the grammar compiles with GitHub Linguist's grammar compiler, so
+  # regressions (e.g. variable-length lookbehinds) are caught before they'd
+  # break syntax highlighting on GitHub.com.
+  # See https://github.com/github-linguist/linguist/issues/3924#issuecomment-2960632465
+  linguist:
+    runs-on: ubuntu-latest
+    env:
+      REPO_PATH: qsharp-tmLanguage
+    steps:
+      - name: Checkout linguist
+        uses: actions/checkout@v4
+        with:
+          repository: github-linguist/linguist
+
+      - name: Checkout current repo/PR as submodule
+        uses: actions/checkout@v4
+        with:
+          path: vendor/grammars/${{ env.REPO_PATH }}
+          clean: false
+
+      - name: Compile linguist grammar
+        run: script/grammar-compiler add vendor/grammars/${{ env.REPO_PATH }}
