@@ -270,6 +270,7 @@ repository:
       '0':
         name: punctuation.definition.typeparameters.end.qsharp  
     patterns:
+      - include: '#comments'
       - match: ('[_[:alpha:]][_[:alnum:]]*)\b
         captures:
           '1':
@@ -310,6 +311,7 @@ repository:
       '0':
         name: punctuation.parenthesis.close.qsharp
     patterns:
+    - include: '#comments'
     - include: '#parameter'
     - include: '#punctuation-comma'
 
@@ -335,6 +337,7 @@ repository:
         name: punctuation.separator.colon.qsharp
     end: (?=(,|\)|\]))
     patterns:
+      - include: '#comments'
       - include: '#literals'
       - include: '#types'
       - include: '#library'
@@ -378,6 +381,7 @@ repository:
         '0':
           name: punctuation.parenthesis.close.qsharp
       patterns:
+      - include: '#comments'
       - include: '#literals'
       - include: '#punctuation-comma'
       - include: '#types'
@@ -385,6 +389,7 @@ repository:
     - begin: (?:\s*=\s*)
       end: (?=;)
       patterns:
+      - include: '#comments'
       - include: '#literals'
       - include: '#punctuation-comma'
       - include: '#types'
@@ -428,6 +433,7 @@ repository:
         name: punctuation.separator.colon.qsharp
     end: (?=(,|\}))
     patterns:
+    - include: '#comments'
     - include: '#type-parameter'
     - include: '#types'
     - include: '#library'
@@ -515,6 +521,7 @@ repository:
     - include: '#comments'
     - include: '#if-statement'
     - include: '#new-expression'
+    - include: '#keywords'
     - include: '#strings'
     - include: '#member-access'
     - include: '#library-invocation'
@@ -567,12 +574,14 @@ repository:
         name: keyword.other.import.qsharp
     end: (?=;)|$
     patterns:
+    - include: '#comments'
     - begin: \b(as)\b\s*
       beginCaptures:
         '1':
           name: keyword.other.qsharp
       end: (?=(,|;)|$)
       patterns:
+      - include: '#comments'
       - name: entity.name.type.alias.qsharp
         match: '[_[:alpha:]][_[:alnum:]]*'
     - name: keyword.operator.wildcard.qsharp
@@ -613,6 +622,7 @@ repository:
           name: keyword.other.open.qsharp
       end: (?=;)
       patterns:
+      - include: '#comments'
       - begin: \b(as)\s+(?<alias>[_[:alpha:]][_[:alnum:]]*)
         beginCaptures: 
           '1': 
@@ -669,7 +679,7 @@ repository:
       '1': { name: keyword.other.let.qsharp }
       '2': { name: keyword.other.mutable.qsharp }
       '3': { name: entity.name.variable.local.qsharp }
-    end: (?=;|\))
+    end: (?=;|\)|})
     patterns:
     - include: '#variable-initializer'
 
@@ -707,6 +717,7 @@ repository:
       '0':
         name: punctuation.parenthesis.close.qsharp
     patterns:
+    - include: '#comments'
     - include: '#tuple-pattern'
     - name: entity.name.variable.local.qsharp
       match: \b[_[:alpha:]][_[:alnum:]]*\b
@@ -733,7 +744,7 @@ repository:
       '4': { name: entity.name.variable.local.qsharp }
       '5': { name: keyword.operator.assignment.qsharp }
       '6': { name: keyword.operator.assignment.qsharp }
-    end: (?=;|\))
+    end: (?=;|\)|})
     patterns:
       - name: keyword.operator.assignment.qsharp
         match: <-
@@ -748,7 +759,7 @@ repository:
     beginCaptures:
       '1': { name: keyword.other.set.qsharp }
       '2': { name: entity.name.variable.local.qsharp }
-    end: (?=;|\))
+    end: (?=;|\)|})
     patterns:
     - include: '#variable-initializer'
 
@@ -818,7 +829,7 @@ repository:
       '1': { name: keyword.other.use.qsharp }
       '2': { name: keyword.other.borrow.qsharp }
       '3': { name: entity.name.variable.local.qsharp }
-    end: (?=;|\))
+    end: (?=;|\)|})
     patterns:
     - include: '#quantum-initializer'
 
